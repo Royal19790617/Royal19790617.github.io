@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>nodejs项目docker部署 | Royal&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="用koa2框架搭建的一个基于restful的接口服务，通过docker化实现部署前提条件 需要有docker基础 需要有docker-compose基础 nodejs基础 linux命令基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nodejs项目docker部署">
+<meta property="og:url" content="https://royal19790617.github.io/2021/04/09/nodejs%E9%A1%B9%E7%9B%AEdocker%E9%83%A8%E7%BD%B2/index.html">
+<meta property="og:site_name" content="Royal&#39;s Blog">
+<meta property="og:description" content="用koa2框架搭建的一个基于restful的接口服务，通过docker化实现部署前提条件 需要有docker基础 需要有docker-compose基础 nodejs基础 linux命令基础">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-04-09T09:18:10.000Z">
+<meta property="article:modified_time" content="2021-04-09T10:06:28.556Z">
+<meta property="article:author" content="Royal">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Royal's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Royal&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://royal19790617.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-nodejs项目docker部署" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/04/09/nodejs%E9%A1%B9%E7%9B%AEdocker%E9%83%A8%E7%BD%B2/" class="article-date">
+  <time class="dt-published" datetime="2021-04-09T09:18:10.000Z" itemprop="datePublished">2021-04-09</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/docker/">docker</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      nodejs项目docker部署
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="用koa2框架搭建的一个基于restful的接口服务，通过docker化实现部署"><a href="#用koa2框架搭建的一个基于restful的接口服务，通过docker化实现部署" class="headerlink" title="用koa2框架搭建的一个基于restful的接口服务，通过docker化实现部署"></a>用koa2框架搭建的一个基于restful的接口服务，通过docker化实现部署</h2><h3 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件"></a>前提条件</h3><ul>
+<li>需要有docker基础</li>
+<li>需要有docker-compose基础</li>
+<li>nodejs基础</li>
+<li>linux命令基础<span id="more"></span>
+<h3 id="Dockerfile内容如下"><a href="#Dockerfile内容如下" class="headerlink" title="Dockerfile内容如下"></a>Dockerfile内容如下</h3></li>
+<li>具体项目路径根据实际为准，实测跑通<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;基于node版本14镜像</span><br><span class="line">FROM node:14</span><br><span class="line">&#x2F;&#x2F;复制本地项目至镜像，注意路径问题，复制到镜像内的路径是&#x2F;usr&#x2F;local&#x2F;app&#x2F;contacts-demo</span><br><span class="line">COPY .&#x2F;contacts-demo&#x2F; &#x2F;usr&#x2F;local&#x2F;app</span><br><span class="line">&#x2F;&#x2F;指定工作目录</span><br><span class="line">WORKDIR &#x2F;usr&#x2F;local&#x2F;app</span><br><span class="line">&#x2F;&#x2F; 安装npm环境</span><br><span class="line">RUN npm i --registry&#x3D;https:&#x2F;&#x2F;registry.npm.taobao.org</span><br><span class="line">&#x2F;&#x2F;暴露镜像端口</span><br><span class="line">EXPOSE 3000</span><br><span class="line">&#x2F;&#x2F;启动node项目，此处需要注意路径</span><br><span class="line">CMD [ &quot;node&quot;, &quot;contacts-demo&#x2F;src&#x2F;server&#x2F;www&quot; ]</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="docker-compose-yml文件内容"><a href="#docker-compose-yml文件内容" class="headerlink" title="docker-compose.yml文件内容"></a>docker-compose.yml文件内容</h3><ul>
+<li>具体配置根据实际需要可调整，实测跑通<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">version: &#39;3&#39;</span><br><span class="line">services:</span><br><span class="line">  app:</span><br><span class="line">    build: .&#x2F;</span><br><span class="line">    volumes:</span><br><span class="line">      - .&#x2F;:&#x2F;usr&#x2F;local&#x2F;app</span><br><span class="line">    working_dir: &#x2F;usr&#x2F;local&#x2F;app</span><br><span class="line">    ports:</span><br><span class="line">      - 3000:3000</span><br><span class="line">    environment:</span><br><span class="line">      - royal&#x3D;333</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="相关命令"><a href="#相关命令" class="headerlink" title="相关命令"></a>相关命令</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;启动docker-compose</span><br><span class="line">docker-compose up -d --build</span><br><span class="line">&#x2F;&#x2F;关闭docker-compose</span><br><span class="line">docker-compose down</span><br><span class="line">&#x2F;&#x2F;查看docker日志</span><br><span class="line">docker logs -f 容器id</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://royal19790617.github.io/2021/04/09/nodejs%E9%A1%B9%E7%9B%AEdocker%E9%83%A8%E7%BD%B2/" data-id="ckna51o680000u8v8e45wcdmi" data-title="nodejs项目docker部署" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/04/09/nodejs%E9%A1%B9%E7%9B%AE%E4%B8%AD%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%9C%A8docker%E4%B8%AD%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          nodejs项目中配置文件在docker中的使用方式
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/04/02/nodejs%E4%BB%A3%E7%A0%81this%E4%BD%9C%E7%94%A8%E5%9F%9F%E7%9A%84%E9%97%AE%E9%A2%98/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">nodejs代码this作用域的问题</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/antd/">antd</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/js/">js</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/tips/">tips</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/06/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6node-06-%E4%B9%8Bmocha%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/">从零开始学node-06-之mocha自动化测试</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/15/nodejs%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E4%B9%8B%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/">nodejs常见问题之解决之道</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/31/js-unshift%E6%96%B9%E6%B3%95/">js-unshift方法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/31/lodash%E5%AE%9E%E7%94%A8%E5%87%BD%E6%95%B0%E7%94%A8%E6%B3%95%E5%AE%9D%E5%85%B8-%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%E4%B8%AD/">lodash实用函数用法宝典-持续更新中</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/25/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6node-05-%E4%B9%8Bmongoose%E9%85%8D%E7%BD%AE%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8-md/">从零开始学node-05-之mongoose配置及简单使用.md</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 Royal<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

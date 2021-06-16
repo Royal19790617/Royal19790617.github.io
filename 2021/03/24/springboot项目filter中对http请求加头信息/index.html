@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>springboot项目filter中对http请求加头信息 | Royal&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="需求 前后台交互，原来是通过参数的sessionId进行权限认证，之后因为权限认证规范升级，使用jwt规范的accessToken，后台需要兼容参数sessionId和请求头信息里的authorization，最终头信息都会带着token信息。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="springboot项目filter中对http请求加头信息">
+<meta property="og:url" content="https://royal19790617.github.io/2021/03/24/springboot%E9%A1%B9%E7%9B%AEfilter%E4%B8%AD%E5%AF%B9http%E8%AF%B7%E6%B1%82%E5%8A%A0%E5%A4%B4%E4%BF%A1%E6%81%AF/index.html">
+<meta property="og:site_name" content="Royal&#39;s Blog">
+<meta property="og:description" content="需求 前后台交互，原来是通过参数的sessionId进行权限认证，之后因为权限认证规范升级，使用jwt规范的accessToken，后台需要兼容参数sessionId和请求头信息里的authorization，最终头信息都会带着token信息。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-03-24T02:35:43.000Z">
+<meta property="article:modified_time" content="2021-03-24T03:13:08.141Z">
+<meta property="article:author" content="Royal">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Royal's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Royal&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://royal19790617.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-springboot项目filter中对http请求加头信息" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/24/springboot%E9%A1%B9%E7%9B%AEfilter%E4%B8%AD%E5%AF%B9http%E8%AF%B7%E6%B1%82%E5%8A%A0%E5%A4%B4%E4%BF%A1%E6%81%AF/" class="article-date">
+  <time class="dt-published" datetime="2021-03-24T02:35:43.000Z" itemprop="datePublished">2021-03-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java/">java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      springboot项目filter中对http请求加头信息
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><ul>
+<li><p>前后台交互，原来是通过参数的sessionId进行权限认证，之后因为权限认证规范升级，使用jwt规范的accessToken，后台需要兼容参数sessionId和请求头信息里的authorization，最终头信息都会带着token信息。</p>
+<span id="more"></span>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">@Slf4j</span><br><span class="line">@Component</span><br><span class="line">@Order(1)</span><br><span class="line">public class SessionFilter implements Filter &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void destroy() &#123;</span><br><span class="line">&#x2F;&#x2F;        log.info(&quot;filter destroy&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void doFilter(ServletRequest servletRequest, ServletResponse response,</span><br><span class="line">                         FilterChain chain) throws IOException, ServletException &#123;</span><br><span class="line">        HttpServletRequest request &#x3D; (HttpServletRequest) servletRequest;</span><br><span class="line">        MutableHttpServletRequest mutableRequest &#x3D; new MutableHttpServletRequest(request);</span><br><span class="line"></span><br><span class="line">        if (StringUtils.isBlank(request.getHeader(&quot;X_AUTH_TOKEN&quot;))) &#123;</span><br><span class="line">            if (Optional.ofNullable(request.getParameter(&quot;sessionId&quot;)).isPresent())&#123;</span><br><span class="line">                &#x2F;&#x2F;设置请求头信息</span><br><span class="line">                mutableRequest.putHeader(&quot;X_AUTH_TOKEN&quot;, request.getParameter(&quot;sessionId&quot;));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">&#x2F;&#x2F;        log.info(&quot;header--&gt;&#123;&#125;&quot;,getHeadKeyAndValue(mutableRequest));</span><br><span class="line">        chain.doFilter(mutableRequest, response);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void init(FilterConfig filterConfig) throws ServletException &#123;</span><br><span class="line">&#x2F;&#x2F;        log.info(&quot;filter init&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private Map&lt;String, String&gt; getHeadKeyAndValue(HttpServletRequest httpRequest) &#123;</span><br><span class="line">        Map&lt;String, String&gt; header &#x3D; new HashMap&lt;&gt;();</span><br><span class="line">        Enumeration&lt;String&gt; headerNames &#x3D; httpRequest.getHeaderNames();</span><br><span class="line">        while (headerNames.hasMoreElements()) &#123;</span><br><span class="line">            String nextElement &#x3D; headerNames.nextElement();</span><br><span class="line">            header.put(nextElement, httpRequest.getHeader(nextElement));</span><br><span class="line">        &#125;</span><br><span class="line">        return header;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>工具类，操作请求头</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">@Slf4j</span><br><span class="line">final class MutableHttpServletRequest extends HttpServletRequestWrapper &#123;</span><br><span class="line">    private final Map&lt;String, String&gt; customHeaders;</span><br><span class="line"></span><br><span class="line">    public MutableHttpServletRequest(HttpServletRequest request)&#123;</span><br><span class="line">        super(request);</span><br><span class="line">        this.customHeaders &#x3D; new HashMap&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void putHeader(String name, String value)&#123;</span><br><span class="line">        this.customHeaders.put(name, value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String getHeader(String name) &#123;</span><br><span class="line">        String headerValue &#x3D; customHeaders.get(name);</span><br><span class="line"></span><br><span class="line">        if (headerValue !&#x3D; null)&#123;</span><br><span class="line">            return headerValue;</span><br><span class="line">        &#125;</span><br><span class="line">        return ((HttpServletRequest) getRequest()).getHeader(name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Enumeration&lt;String&gt; getHeaderNames() &#123;</span><br><span class="line">        if (customHeaders.isEmpty()) &#123;</span><br><span class="line">            return super.getHeaderNames();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Set&lt;String&gt; set &#x3D; new HashSet&lt;String&gt;(customHeaders.keySet());</span><br><span class="line">        &#x2F;&#x2F; 添加自定义header</span><br><span class="line">        Enumeration&lt;String&gt; e &#x3D; ((HttpServletRequest) getRequest()).getHeaderNames();</span><br><span class="line">        while (e.hasMoreElements()) &#123;</span><br><span class="line">            String n &#x3D; e.nextElement();</span><br><span class="line">            set.add(n);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return Collections.enumeration(set);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://royal19790617.github.io/2021/03/24/springboot%E9%A1%B9%E7%9B%AEfilter%E4%B8%AD%E5%AF%B9http%E8%AF%B7%E6%B1%82%E5%8A%A0%E5%A4%B4%E4%BF%A1%E6%81%AF/" data-id="ckmogp8os0002cwv88np143e3" data-title="springboot项目filter中对http请求加头信息" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/03/24/feign%E8%B0%83%E7%94%A8%E6%96%B0%E5%A2%9E%E5%8A%A0%E7%9A%84%E8%AF%B7%E6%B1%82%E5%A4%B4%E4%B8%8D%E4%BC%A0%E9%80%92%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          feign调用新增加的请求头不传递问题解决
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/22/sqlserver2012%E4%B9%8B%E4%BD%BF%E7%94%A8http%E8%B0%83%E7%94%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">sqlserver2012之使用http调用</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/antd/">antd</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/js/">js</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/tips/">tips</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/06/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6node-06-%E4%B9%8Bmocha%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/">从零开始学node-06-之mocha自动化测试</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/15/nodejs%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E4%B9%8B%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/">nodejs常见问题之解决之道</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/31/js-unshift%E6%96%B9%E6%B3%95/">js-unshift方法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/31/lodash%E5%AE%9E%E7%94%A8%E5%87%BD%E6%95%B0%E7%94%A8%E6%B3%95%E5%AE%9D%E5%85%B8-%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%E4%B8%AD/">lodash实用函数用法宝典-持续更新中</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/25/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6node-05-%E4%B9%8Bmongoose%E9%85%8D%E7%BD%AE%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8-md/">从零开始学node-05-之mongoose配置及简单使用.md</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 Royal<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

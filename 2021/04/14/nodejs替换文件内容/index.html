@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>nodejs替换文件内容 | Royal&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="起因 单位要新启动一个项目，我负责后台服务接口，框架是搭好的模板，早上还在洋洋自得，从其他项目复制router，model，servcie的文件生成一套新的接口，从修改内容到调通接口，才用了一个小时左右；到了下午要写第二套接口的时候，有点犯难了，后面还有几套接口要写，无论有没有业务逻辑，接口的架构部分完全可以复制，也就是把一些关键字做替换就是一套新接口文件了，重复劳动没意思，所以想写一个代码生成工">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nodejs替换文件内容">
+<meta property="og:url" content="https://royal19790617.github.io/2021/04/14/nodejs%E6%9B%BF%E6%8D%A2%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9/index.html">
+<meta property="og:site_name" content="Royal&#39;s Blog">
+<meta property="og:description" content="起因 单位要新启动一个项目，我负责后台服务接口，框架是搭好的模板，早上还在洋洋自得，从其他项目复制router，model，servcie的文件生成一套新的接口，从修改内容到调通接口，才用了一个小时左右；到了下午要写第二套接口的时候，有点犯难了，后面还有几套接口要写，无论有没有业务逻辑，接口的架构部分完全可以复制，也就是把一些关键字做替换就是一套新接口文件了，重复劳动没意思，所以想写一个代码生成工">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-04-14T07:00:17.000Z">
+<meta property="article:modified_time" content="2021-04-14T08:32:18.321Z">
+<meta property="article:author" content="Royal">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Royal's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Royal&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://royal19790617.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-nodejs替换文件内容" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/04/14/nodejs%E6%9B%BF%E6%8D%A2%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9/" class="article-date">
+  <time class="dt-published" datetime="2021-04-14T07:00:17.000Z" itemprop="datePublished">2021-04-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/js/">js</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      nodejs替换文件内容
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><ul>
+<li>单位要新启动一个项目，我负责后台服务接口，框架是搭好的模板，早上还在洋洋自得，从其他项目复制router，model，servcie的文件生成一套新的接口，从修改内容到调通接口，才用了一个小时左右；到了下午要写第二套接口的时候，有点犯难了，后面还有几套接口要写，无论有没有业务逻辑，接口的架构部分完全可以复制，也就是把一些关键字做替换就是一套新接口文件了，重复劳动没意思，所以想写一个代码生成工具，提高生成效率才是王道。</li>
+<li>一套接口包含新增，修改，删除，单个查询，列表查询<span id="more"></span></li>
+</ul>
+<h3 id="WEB接口一般变化的有3个文件，所以做了3个模板"><a href="#WEB接口一般变化的有3个文件，所以做了3个模板" class="headerlink" title="WEB接口一般变化的有3个文件，所以做了3个模板"></a>WEB接口一般变化的有3个文件，所以做了3个模板</h3><ul>
+<li><ol>
+<li>router_template.js(例举部分代码，以新增模块为例)<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">const $content$Svc &#x3D; require(&#39;..&#x2F;..&#x2F;service&#x2F;$content$-service.js&#39;); &#x2F;&#x2F;服务模块</span><br><span class="line"></span><br><span class="line">router.post(&#39;&#x2F;$content$s&#39;,async function(ctx)&#123;</span><br><span class="line">  let $content$ &#x3D; ctx.request.body;</span><br><span class="line">  let result &#x3D; await $content$Svc.add$content_upper$($content$);</span><br><span class="line">  ctx.body &#x3D; result;</span><br><span class="line">&#125;) </span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><ol start="2">
+<li>service_template.js(例举部分代码，以新增模块为例)<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">const APIRes &#x3D; require(&quot;..&#x2F;server&#x2F;middleware&#x2F;res.js&quot;); &#x2F;&#x2F;封装返回结构模块</span><br><span class="line">const $content_upper$ &#x3D; require(&quot;..&#x2F;model&#x2F;$content$.js&quot;); &#x2F;&#x2F;数据接口模块</span><br><span class="line"></span><br><span class="line">async function add$content_upper$($content$)&#123;</span><br><span class="line">    &#x2F;&#x2F;业务逻辑可自行调整，验证是否同名，同名则不可新增</span><br><span class="line">    let wherestr &#x3D; &#123;&#39;$content$_name&#39; : $content$.name&#125;;</span><br><span class="line">    var isExist;</span><br><span class="line">    try &#123;</span><br><span class="line">        isExist &#x3D; await $content_upper$.count(wherestr);</span><br><span class="line">    &#125; catch (error) &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    console.log(isExist);</span><br><span class="line">    &#x2F;&#x2F;不同名，则新建</span><br><span class="line">    if (isExist &#x3D;&#x3D; 0) &#123;</span><br><span class="line">        try &#123;       </span><br><span class="line">            await $content_upper$.create($content$);</span><br><span class="line">            return new APIRes.resSuccess()</span><br><span class="line">        &#125; catch (error) &#123;</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        console.log(&#39;$content_upper$ already exist,name:&#39;+ $content$.name)</span><br><span class="line">        return new APIRes.resFailure();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><ol start="3">
+<li>model_template.js，数据库结构文件，此处使用的是mongodb<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">var mongoose &#x3D; require(&#39;..&#x2F;server&#x2F;config&#x2F;db.js&#39;),</span><br><span class="line">    Schema &#x3D; mongoose.Schema;</span><br><span class="line"></span><br><span class="line">var $content_upper$Schema &#x3D; new Schema(&#123; </span><br><span class="line">    $content$_name : &#123; type: String &#125;, &#x2F;&#x2F;名称</span><br><span class="line">    create_time : &#123; type: Date, default: Date.now()&#125;,</span><br><span class="line">    update_time : &#123; type: Date, default: Date.now()&#125; &#x2F;&#x2F;最近登录时间</span><br><span class="line">&#125;,&#123;timestamps: true&#125;);</span><br><span class="line"></span><br><span class="line">module.exports &#x3D; mongoose.model(&#39;$content_upper$&#39;,$content_upper$Schema);</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+</ul>
+<h3 id="其实就是在js文件里加了一些替换关键字"><a href="#其实就是在js文件里加了一些替换关键字" class="headerlink" title="其实就是在js文件里加了一些替换关键字"></a>其实就是在js文件里加了一些替换关键字</h3><ul>
+<li>替换文件中的$content$，$content_upper$，具体输出文件名可以根据实际规范重写<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">const fs &#x3D; require(&#39;fs&#39;)</span><br><span class="line">var path &#x3D; require(&#39;path&#39;);</span><br><span class="line"></span><br><span class="line">const name &#x3D; &#39;test&#39; &#x2F;&#x2F;手动输入要修改的关键字</span><br><span class="line">const method_upper &#x3D; name.substr(0,1).toLocaleUpperCase() + name.substr(1); &#x2F;&#x2F;首字母大写</span><br><span class="line"></span><br><span class="line">var filePath&#x3D;path.resolve(__dirname+&#39;&#x2F;template&#39;);  </span><br><span class="line">console.log(filePath);</span><br><span class="line">&#x2F;&#x2F;readdir方法读取文件名</span><br><span class="line">&#x2F;&#x2F;readFile方法读取文件内容</span><br><span class="line">&#x2F;&#x2F;writeFile改写文件内容</span><br><span class="line">fs.readdir(filePath, &#39;utf8&#39;, function (err,data) &#123;</span><br><span class="line">    &#x2F;&#x2F;遍历目录下所有文件</span><br><span class="line">	data.forEach(function(item, index) &#123;</span><br><span class="line">		&#x2F;&#x2F;console.log(item)</span><br><span class="line">		fs.readFile(&#39;code_files&#x2F;template&#x2F;&#39;+item,&#39;utf8&#39;,function(err,files)&#123;</span><br><span class="line">			&#x2F;&#x2F; console.log(files)</span><br><span class="line">			var result &#x3D; files.replace(&#x2F;\$content\$&#x2F;g, name).replace(&#x2F;\$content_upper\$&#x2F;g, method_upper);</span><br><span class="line">            fs.writeFile(&#39;code_files&#x2F;dest&#x2F;item, result, &#39;utf8&#39;, function (err) &#123;</span><br><span class="line">                if (err) return console.log(err);</span><br><span class="line">            &#125;);</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><ul>
+<li>之前一小时只能完成一套接口，现在简单的接口十套都能搞定，不必为了写点重复代码浪费时间；要提高效率，还是要三思而后行，码农和程序员也只是一线之隔，就看你肯不肯动脑筋了。</li>
+</ul>
+<p>参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_41978390/article/details/80053865">https://blog.csdn.net/weixin_41978390/article/details/80053865</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://royal19790617.github.io/2021/04/14/nodejs%E6%9B%BF%E6%8D%A2%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9/" data-id="cknh75g190000x8v86devdlqo" data-title="nodejs替换文件内容" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/04/20/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6node-04-%E4%B9%8Bkoa2%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          从零开始学node 04 之koa2原理解析
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/04/13/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6node-03-%E4%B9%8B%E5%88%9D%E5%A7%8B%E5%8C%96WEB%E9%A1%B9%E7%9B%AE/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">从零开始学node 03 之初始化WEB项目</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/antd/">antd</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/js/">js</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/tips/">tips</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/06/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6node-06-%E4%B9%8Bmocha%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/">从零开始学node-06-之mocha自动化测试</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/15/nodejs%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E4%B9%8B%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/">nodejs常见问题之解决之道</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/31/js-unshift%E6%96%B9%E6%B3%95/">js-unshift方法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/31/lodash%E5%AE%9E%E7%94%A8%E5%87%BD%E6%95%B0%E7%94%A8%E6%B3%95%E5%AE%9D%E5%85%B8-%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%E4%B8%AD/">lodash实用函数用法宝典-持续更新中</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/25/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6node-05-%E4%B9%8Bmongoose%E9%85%8D%E7%BD%AE%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8-md/">从零开始学node-05-之mongoose配置及简单使用.md</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 Royal<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

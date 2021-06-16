@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>java解决maven证书失效问题 | Royal&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="问题描述：新建springboot项目，通过maven下载pom.xml引入依赖包时发生报错 报错关键字1unable to find valid certification path to requested target">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java解决maven证书失效问题">
+<meta property="og:url" content="https://royal19790617.github.io/2021/04/02/java%E8%A7%A3%E5%86%B3maven%E8%AF%81%E4%B9%A6%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="Royal&#39;s Blog">
+<meta property="og:description" content="问题描述：新建springboot项目，通过maven下载pom.xml引入依赖包时发生报错 报错关键字1unable to find valid certification path to requested target">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://royal19790617.github.io/2021/04/02/java%E8%A7%A3%E5%86%B3maven%E8%AF%81%E4%B9%A6%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/p1.png">
+<meta property="og:image" content="https://royal19790617.github.io/2021/04/02/java%E8%A7%A3%E5%86%B3maven%E8%AF%81%E4%B9%A6%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/p2.png">
+<meta property="og:image" content="https://royal19790617.github.io/2021/04/02/java%E8%A7%A3%E5%86%B3maven%E8%AF%81%E4%B9%A6%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/p3.png">
+<meta property="og:image" content="https://royal19790617.github.io/2021/04/02/java%E8%A7%A3%E5%86%B3maven%E8%AF%81%E4%B9%A6%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/p4.png">
+<meta property="article:published_time" content="2021-04-02T02:23:49.000Z">
+<meta property="article:modified_time" content="2021-04-02T03:27:53.551Z">
+<meta property="article:author" content="Royal">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://royal19790617.github.io/2021/04/02/java%E8%A7%A3%E5%86%B3maven%E8%AF%81%E4%B9%A6%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/p1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Royal's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Royal&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://royal19790617.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-java解决maven证书失效问题" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/04/02/java%E8%A7%A3%E5%86%B3maven%E8%AF%81%E4%B9%A6%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/" class="article-date">
+  <time class="dt-published" datetime="2021-04-02T02:23:49.000Z" itemprop="datePublished">2021-04-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java/">java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      java解决maven证书失效问题
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="问题描述：新建springboot项目，通过maven下载pom-xml引入依赖包时发生报错"><a href="#问题描述：新建springboot项目，通过maven下载pom-xml引入依赖包时发生报错" class="headerlink" title="问题描述：新建springboot项目，通过maven下载pom.xml引入依赖包时发生报错"></a>问题描述：新建springboot项目，通过maven下载pom.xml引入依赖包时发生报错</h2><ul>
+<li>报错关键字<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unable to find valid certification path to requested target</span><br></pre></td></tr></table></figure>
+<span id="more"></span></li>
+</ul>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><h3 id="1-通过chrome浏览器下载证书到本地"><a href="#1-通过chrome浏览器下载证书到本地" class="headerlink" title="1.通过chrome浏览器下载证书到本地"></a>1.通过chrome浏览器下载证书到本地</h3><ul>
+<li><p>在Chrome中打开链接，点击左边“锁”图标后出现弹窗，再点击“证书”。<br><img src="p1.png"></p>
+</li>
+<li><p>点击“详细信息”tab，点击“复制到文件”，选择本机某个位置，点击“保存”。<br>此处，我保存在d:\ali_maven.cer<br><img src="p2.png"></p>
+</li>
+</ul>
+<h3 id="2、通过证书添加到java信任证书库"><a href="#2、通过证书添加到java信任证书库" class="headerlink" title="2、通过证书添加到java信任证书库"></a>2、通过证书添加到java信任证书库</h3><ul>
+<li><p>本机管理员打开cmd，切换到：{java安装根目录}\jre\lib\security</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keytool -import -alias repo -keystore cacerts -file d:\doc\maven\repo.cer</span><br></pre></td></tr></table></figure></li>
+<li><p>输入默认密码：changeit，这是java中cacerts证书库的默认密码。<br><img src="p3.png"></p>
+</li>
+<li><p>查看证书，此处注意别名要与导入时一致，密码同上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keytool -list -keystore cacerts -alias repo</span><br></pre></td></tr></table></figure>
+<p><img src="p4.png"></p>
+</li>
+<li><p>重启IDE，如果不行需要重启电脑</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://royal19790617.github.io/2021/04/02/java%E8%A7%A3%E5%86%B3maven%E8%AF%81%E4%B9%A6%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/" data-id="ckmzqlxmj0000zgv8hkj84iba" data-title="java解决maven证书失效问题" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/04/02/nodejs%E4%BB%A3%E7%A0%81this%E4%BD%9C%E7%94%A8%E5%9F%9F%E7%9A%84%E9%97%AE%E9%A2%98/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          nodejs代码this作用域的问题
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/04/02/nodejs%E8%B0%83%E7%94%A8webservice/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">nodejs调用webservice</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/antd/">antd</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/js/">js</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/tips/">tips</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/06/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6node-06-%E4%B9%8Bmocha%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/">从零开始学node-06-之mocha自动化测试</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/15/nodejs%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E4%B9%8B%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/">nodejs常见问题之解决之道</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/31/js-unshift%E6%96%B9%E6%B3%95/">js-unshift方法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/31/lodash%E5%AE%9E%E7%94%A8%E5%87%BD%E6%95%B0%E7%94%A8%E6%B3%95%E5%AE%9D%E5%85%B8-%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%E4%B8%AD/">lodash实用函数用法宝典-持续更新中</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/25/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6node-05-%E4%B9%8Bmongoose%E9%85%8D%E7%BD%AE%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8-md/">从零开始学node-05-之mongoose配置及简单使用.md</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 Royal<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

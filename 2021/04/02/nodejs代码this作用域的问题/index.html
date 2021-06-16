@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>nodejs代码this作用域的问题 | Royal&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="虽然是这个标题，其实想研究的点可能会有所扩散，目的还是想从细节入手，问题出现就要搞清楚原理，而不是皮毛，否则下次又不明所以，先以一段代码作为引子，抛砖引玉">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nodejs代码this作用域的问题">
+<meta property="og:url" content="https://royal19790617.github.io/2021/04/02/nodejs%E4%BB%A3%E7%A0%81this%E4%BD%9C%E7%94%A8%E5%9F%9F%E7%9A%84%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="Royal&#39;s Blog">
+<meta property="og:description" content="虽然是这个标题，其实想研究的点可能会有所扩散，目的还是想从细节入手，问题出现就要搞清楚原理，而不是皮毛，否则下次又不明所以，先以一段代码作为引子，抛砖引玉">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-04-02T02:25:28.000Z">
+<meta property="article:modified_time" content="2021-04-06T03:27:27.612Z">
+<meta property="article:author" content="Royal">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Royal's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Royal&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://royal19790617.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-nodejs代码this作用域的问题" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/04/02/nodejs%E4%BB%A3%E7%A0%81this%E4%BD%9C%E7%94%A8%E5%9F%9F%E7%9A%84%E9%97%AE%E9%A2%98/" class="article-date">
+  <time class="dt-published" datetime="2021-04-02T02:25:28.000Z" itemprop="datePublished">2021-04-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/js/">js</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      nodejs代码this作用域的问题
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="虽然是这个标题，其实想研究的点可能会有所扩散，目的还是想从细节入手，问题出现就要搞清楚原理，而不是皮毛，否则下次又不明所以，先以一段代码作为引子，抛砖引玉"><a href="#虽然是这个标题，其实想研究的点可能会有所扩散，目的还是想从细节入手，问题出现就要搞清楚原理，而不是皮毛，否则下次又不明所以，先以一段代码作为引子，抛砖引玉" class="headerlink" title="虽然是这个标题，其实想研究的点可能会有所扩散，目的还是想从细节入手，问题出现就要搞清楚原理，而不是皮毛，否则下次又不明所以，先以一段代码作为引子，抛砖引玉"></a>虽然是这个标题，其实想研究的点可能会有所扩散，目的还是想从细节入手，问题出现就要搞清楚原理，而不是皮毛，否则下次又不明所以，先以一段代码作为引子，抛砖引玉</h2><span id="more"></span>
+
+<h3 id="先说需求，想通过配置，改造一个老方法，目的是入口不变，但是可以根据环境变量配置进入不同的方法，"><a href="#先说需求，想通过配置，改造一个老方法，目的是入口不变，但是可以根据环境变量配置进入不同的方法，" class="headerlink" title="先说需求，想通过配置，改造一个老方法，目的是入口不变，但是可以根据环境变量配置进入不同的方法，"></a>先说需求，想通过配置，改造一个老方法，目的是入口不变，但是可以根据环境变量配置进入不同的方法，</h3><ul>
+<li><p>普通的写法（if/else的写法）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">const condition1 &#x3D; &#39;aaa&#39;;</span><br><span class="line"></span><br><span class="line">()&#x3D;&gt;&#123;</span><br><span class="line">   let condition &#x3D; process.env.condition || condition1;</span><br><span class="line">   if (condition &#x3D;&#x3D;&#x3D; condition1) &#123;</span><br><span class="line">      data &#x3D;  sonFunc1();</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      data &#x3D;  sonFunc2();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li><p>较优雅的写法，但是牵涉的语法概念较多，要了解原理还是需要深入探讨一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">const condition1 &#x3D; &#39;aaa&#39;;</span><br><span class="line">const condition2 &#x3D; &#39;bbb&#39;;</span><br><span class="line">const func &#x3D; &#123;</span><br><span class="line">    aaa:sonFunc1,</span><br><span class="line">    bbb:sonFunc2</span><br><span class="line">&#125;</span><br><span class="line">()&#x3D;&gt;&#123;</span><br><span class="line">    let condition &#x3D; process.env.condition || condition1;</span><br><span class="line">    let ccc &#x3D; func[condition];</span><br><span class="line">    let data &#x3D; func();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="牵涉的语法点"><a href="#牵涉的语法点" class="headerlink" title="牵涉的语法点"></a>牵涉的语法点</h3><ul>
+<li><p>1.函数字面量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">const func &#x3D; &#123;</span><br><span class="line">    aaa:sonFunc1,&#x2F;&#x2F;aaa是属性，sonFunc1是属性对应函数</span><br><span class="line">    bbb:sonFunc2</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li><p>2.字面量的调用方式，此处condition其实就是字符串’aaa’的变量，相当于func[‘aaa’]，方括号内必须是字符串，func[aaa]是调用不到func对象的属性内容的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">let ccc &#x3D; func[condition];&#x2F;&#x2F;调用变量的属性，一般比较属性的写法是func.aaa,这是另一种写法func[&#39;aaa&#39;]，方括号内属性必须是字符串形式，具体这两种写法还是有区别的，此处不做深入</span><br></pre></td></tr></table></figure></li>
+<li><p>3.在对象字面量中可以使用中括号作为属性，表示属性也能是一个变量了</p>
+</li>
+</ul>
+<ul>
+<li><p>其实第一版是这么写的，想法是属性是变量，可能是java的习惯，觉得写在变量里就是魔法值，代码角度总是不雅，然后调用时总是进不了对应的方法，这个坑还是要自己填</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">const condition1 &#x3D; &#39;aaa&#39;;</span><br><span class="line">const condition2 &#x3D; &#39;bbb&#39;;</span><br><span class="line">const func &#x3D; &#123;</span><br><span class="line">    condition1:sonFunc1,</span><br><span class="line">    condition2:sonFunc2</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li><p>正确的写法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">const condition1 &#x3D; &#39;aaa&#39;;</span><br><span class="line">const condition2 &#x3D; &#39;bbb&#39;;</span><br><span class="line">const func &#x3D; &#123;</span><br><span class="line">    [condition1]:sonFunc1,&#x2F;&#x2F;带了中括号的condition1，就相当于是aaa</span><br><span class="line">    [condition2]:sonFunc2</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="入正题，说说this作用域的问题"><a href="#入正题，说说this作用域的问题" class="headerlink" title="入正题，说说this作用域的问题"></a>入正题，说说this作用域的问题</h2><h3 id="问题描述，在first-js中通过上述较优雅的调用方式调用second-js中的sonFunc1函数，子方法中通过this关键字调用本身的一个私有函数-test，结果是调用this这行报错，this对象是undefined"><a href="#问题描述，在first-js中通过上述较优雅的调用方式调用second-js中的sonFunc1函数，子方法中通过this关键字调用本身的一个私有函数-test，结果是调用this这行报错，this对象是undefined" class="headerlink" title="问题描述，在first.js中通过上述较优雅的调用方式调用second.js中的sonFunc1函数，子方法中通过this关键字调用本身的一个私有函数_test，结果是调用this这行报错，this对象是undefined"></a>问题描述，在first.js中通过上述较优雅的调用方式调用second.js中的sonFunc1函数，子方法中通过this关键字调用本身的一个私有函数_test，结果是调用this这行报错，this对象是undefined</h3><ul>
+<li><ol>
+<li>first.js<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">const second &#x3D; require(&quot;.&#x2F;second.js&quot;);</span><br><span class="line">const condition1 &#x3D; &#39;aaa&#39;;</span><br><span class="line">const condition2 &#x3D; &#39;bbb&#39;;</span><br><span class="line">const func &#x3D; &#123;</span><br><span class="line">    aaa:second.sonFunc1,</span><br><span class="line">    bbb:second.sonFunc2</span><br><span class="line">&#125;</span><br><span class="line">()&#x3D;&gt;&#123;</span><br><span class="line">    let condition &#x3D; process.env.condition || condition1;</span><br><span class="line">    let ccc &#x3D; func[condition];</span><br><span class="line">    let data &#x3D; func();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><ol start="2">
+<li>second.js<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">module.exports &#x3D; &#123;</span><br><span class="line">    function sonFunc1()&#123;</span><br><span class="line">        this._test();</span><br><span class="line">    &#125;;</span><br><span class="line">    function sonFunc2()&#123;&#125;;</span><br><span class="line">    _test()&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+</ul>
+<h3 id="this关键字的作用域"><a href="#this关键字的作用域" class="headerlink" title="this关键字的作用域"></a>this关键字的作用域</h3><h4 id="this的指向：使用function定义的函数，this的指向随着调用环境的变化而变化，而箭头函数中的this指向是固定不变的，一直指向定义函数的环境。"><a href="#this的指向：使用function定义的函数，this的指向随着调用环境的变化而变化，而箭头函数中的this指向是固定不变的，一直指向定义函数的环境。" class="headerlink" title="this的指向：使用function定义的函数，this的指向随着调用环境的变化而变化，而箭头函数中的this指向是固定不变的，一直指向定义函数的环境。"></a>this的指向：使用function定义的函数，this的指向随着调用环境的变化而变化，而箭头函数中的this指向是固定不变的，一直指向定义函数的环境。</h4><ul>
+<li><p>使用function定义的函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;使用function定义的函数</span><br><span class="line">function foo()&#123;</span><br><span class="line">    console.log(this);</span><br><span class="line">&#125;</span><br><span class="line">var obj &#x3D; &#123; aa: foo &#125;;</span><br><span class="line">foo(); &#x2F;&#x2F;Window</span><br><span class="line">obj.aa() &#x2F;&#x2F;obj &#123; aa: foo &#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>使用箭头函数定义函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;使用箭头函数定义函数</span><br><span class="line">var foo &#x3D; () &#x3D;&gt; &#123; console.log(this) &#125;;</span><br><span class="line">var obj &#x3D; &#123; aa:foo &#125;;</span><br><span class="line">foo(); &#x2F;&#x2F;Window</span><br><span class="line">obj.aa(); &#x2F;&#x2F;Window</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><ul>
+<li><ol>
+<li>如果一个函数中有this，但是它没有被上一级的对象所调用，那么this指向的就是window，这里需要说明的是在js的严格版中this指向的不是window</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>如果一个函数中有this，这个函数有被上一级的对象所调用，那么this指向的就是上一级的对象。</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>如果一个函数中有this，这个函数中包含多个对象，尽管这个函数是被最外层的对象所调用，this指向的也只是它上一级的对象</li>
+</ol>
+</li>
+</ul>
+<h3 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h3><ul>
+<li><p>有了上面的结论，结合代码分析，用上述普通写法时（if/else的写法），this指向的是second对象，所以second对象的私有函数_test可以通过this被调用；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">const second &#x3D; require(&quot;.&#x2F;second.js&quot;);</span><br><span class="line">constant condition1 &#x3D; &#39;aaa&#39;;</span><br><span class="line"></span><br><span class="line">()&#x3D;&gt;&#123;</span><br><span class="line">   let condition &#x3D; process.env.condition || condition1;</span><br><span class="line">   if (condition &#x3D;&#x3D;&#x3D; condition1) &#123;</span><br><span class="line">      data &#x3D;  second.sonFunc1();</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      data &#x3D;  second.sonFunc2();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li><p>但是用优雅写法时，this指向的是first.js中func对象，而不是second对象，所以函数虽然调用到sonFunc1，但是this却是undefined</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">const second &#x3D; require(&quot;.&#x2F;second.js&quot;);</span><br><span class="line">const condition1 &#x3D; &#39;aaa&#39;;</span><br><span class="line">const condition2 &#x3D; &#39;bbb&#39;;</span><br><span class="line">const func &#x3D; &#123;</span><br><span class="line">    aaa:second.sonFunc1,</span><br><span class="line">    bbb:second.sonFunc2</span><br><span class="line">&#125;</span><br><span class="line">()&#x3D;&gt;&#123;</span><br><span class="line">    let condition &#x3D; process.env.condition || condition1;</span><br><span class="line">    let ccc &#x3D; func[condition];</span><br><span class="line">    let data &#x3D; func();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>所以作为一个初学者，不能小看任何一段代码，短短一段代码其实包含了好几个知识点，得过且过是不行的，一挖到底才能把知识转化为自己的。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://royal19790617.github.io/2021/04/02/nodejs%E4%BB%A3%E7%A0%81this%E4%BD%9C%E7%94%A8%E5%9F%9F%E7%9A%84%E9%97%AE%E9%A2%98/" data-id="ckmzqlxmn0001zgv891uy7p9o" data-title="nodejs代码this作用域的问题" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/04/09/nodejs%E9%A1%B9%E7%9B%AEdocker%E9%83%A8%E7%BD%B2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          nodejs项目docker部署
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/04/02/java%E8%A7%A3%E5%86%B3maven%E8%AF%81%E4%B9%A6%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">java解决maven证书失效问题</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/antd/">antd</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/js/">js</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/tips/">tips</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/06/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6node-06-%E4%B9%8Bmocha%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/">从零开始学node-06-之mocha自动化测试</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/15/nodejs%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E4%B9%8B%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/">nodejs常见问题之解决之道</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/31/js-unshift%E6%96%B9%E6%B3%95/">js-unshift方法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/31/lodash%E5%AE%9E%E7%94%A8%E5%87%BD%E6%95%B0%E7%94%A8%E6%B3%95%E5%AE%9D%E5%85%B8-%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%E4%B8%AD/">lodash实用函数用法宝典-持续更新中</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/25/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6node-05-%E4%B9%8Bmongoose%E9%85%8D%E7%BD%AE%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8-md/">从零开始学node-05-之mongoose配置及简单使用.md</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 Royal<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
