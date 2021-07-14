@@ -71,6 +71,54 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-源码解析-十万个为什么-node怎么执行js文件的" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/14/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90-%E5%8D%81%E4%B8%87%E4%B8%AA%E4%B8%BA%E4%BB%80%E4%B9%88-node%E6%80%8E%E4%B9%88%E6%89%A7%E8%A1%8Cjs%E6%96%87%E4%BB%B6%E7%9A%84/" class="article-date">
+  <time class="dt-published" datetime="2021-07-14T07:27:59.000Z" itemprop="datePublished">2021-07-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/js/">js</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/14/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90-%E5%8D%81%E4%B8%87%E4%B8%AA%E4%B8%BA%E4%BB%80%E4%B9%88-node%E6%80%8E%E4%B9%88%E6%89%A7%E8%A1%8Cjs%E6%96%87%E4%BB%B6%E7%9A%84/">源码解析-十万个为什么-node怎么执行js文件的</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="node怎么执行js文件的"><a href="#node怎么执行js文件的" class="headerlink" title="node怎么执行js文件的?"></a>node怎么执行js文件的?</h1><ul>
+<li>初学node的时候，只知道自己写个js文件，然后用node命令去执行，就可以执行这个js文件，当时不求甚解，能用就行，但是等静下心来，自己问自己为什么执行node命令就可以执行这个js文件确并不清楚。
+        
+          <p class="article-more-link">
+            <a href="/2021/07/14/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90-%E5%8D%81%E4%B8%87%E4%B8%AA%E4%B8%BA%E4%BB%80%E4%B9%88-node%E6%80%8E%E4%B9%88%E6%89%A7%E8%A1%8Cjs%E6%96%87%E4%BB%B6%E7%9A%84/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://royal19790617.github.io/2021/07/14/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90-%E5%8D%81%E4%B8%87%E4%B8%AA%E4%B8%BA%E4%BB%80%E4%B9%88-node%E6%80%8E%E4%B9%88%E6%89%A7%E8%A1%8Cjs%E6%96%87%E4%BB%B6%E7%9A%84/" data-id="ckr35wij40000nowm8r6cf6em" data-title="源码解析-十万个为什么-node怎么执行js文件的" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-vi快捷键笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/05/vi%E5%BF%AB%E6%8D%B7%E9%94%AE%E7%AC%94%E8%AE%B0/" class="article-date">
@@ -489,55 +537,6 @@
 
 
   
-    <article id="post-nodejs替换文件内容" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/04/14/nodejs%E6%9B%BF%E6%8D%A2%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9/" class="article-date">
-  <time class="dt-published" datetime="2021-04-14T07:00:17.000Z" itemprop="datePublished">2021-04-14</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/js/">js</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/04/14/nodejs%E6%9B%BF%E6%8D%A2%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9/">nodejs替换文件内容</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><ul>
-<li>单位要新启动一个项目，我负责后台服务接口，框架是搭好的模板，早上还在洋洋自得，从其他项目复制router，model，servcie的文件生成一套新的接口，从修改内容到调通接口，才用了一个小时左右；到了下午要写第二套接口的时候，有点犯难了，后面还有几套接口要写，无论有没有业务逻辑，接口的架构部分完全可以复制，也就是把一些关键字做替换就是一套新接口文件了，重复劳动没意思，所以想写一个代码生成工具，提高生成效率才是王道。</li>
-<li>一套接口包含新增，修改，删除，单个查询，列表查询
-        
-          <p class="article-more-link">
-            <a href="/2021/04/14/nodejs%E6%9B%BF%E6%8D%A2%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://royal19790617.github.io/2021/04/14/nodejs%E6%9B%BF%E6%8D%A2%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9/" data-id="ckq983t2j000xsowmd3cb1zsu" data-title="nodejs替换文件内容" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -581,6 +580,10 @@
       <ul>
         
           <li>
+            <a href="/2021/07/14/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90-%E5%8D%81%E4%B8%87%E4%B8%AA%E4%B8%BA%E4%BB%80%E4%B9%88-node%E6%80%8E%E4%B9%88%E6%89%A7%E8%A1%8Cjs%E6%96%87%E4%BB%B6%E7%9A%84/">源码解析-十万个为什么-node怎么执行js文件的</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/05/vi%E5%BF%AB%E6%8D%B7%E9%94%AE%E7%AC%94%E8%AE%B0/">vi快捷键笔记</a>
           </li>
         
@@ -594,10 +597,6 @@
         
           <li>
             <a href="/2021/06/15/nodejs%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E4%B9%8B%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/">nodejs常见问题之解决之道</a>
-          </li>
-        
-          <li>
-            <a href="/2021/05/31/js-unshift%E6%96%B9%E6%B3%95/">js-unshift方法</a>
           </li>
         
       </ul>

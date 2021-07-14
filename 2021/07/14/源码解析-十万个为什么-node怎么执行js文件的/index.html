@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>源码解析-十万个为什么-node怎么执行js文件的 | Royal&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="node怎么执行js文件的? 初学node的时候，只知道自己写个js文件，然后用node命令去执行，就可以执行这个js文件，当时不求甚解，能用就行，但是等静下心来，自己问自己为什么执行node命令就可以执行这个js文件确并不清楚。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="源码解析-十万个为什么-node怎么执行js文件的">
+<meta property="og:url" content="https://royal19790617.github.io/2021/07/14/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90-%E5%8D%81%E4%B8%87%E4%B8%AA%E4%B8%BA%E4%BB%80%E4%B9%88-node%E6%80%8E%E4%B9%88%E6%89%A7%E8%A1%8Cjs%E6%96%87%E4%BB%B6%E7%9A%84/index.html">
+<meta property="og:site_name" content="Royal&#39;s Blog">
+<meta property="og:description" content="node怎么执行js文件的? 初学node的时候，只知道自己写个js文件，然后用node命令去执行，就可以执行这个js文件，当时不求甚解，能用就行，但是等静下心来，自己问自己为什么执行node命令就可以执行这个js文件确并不清楚。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-07-14T07:27:59.000Z">
+<meta property="article:modified_time" content="2021-07-14T07:45:30.776Z">
+<meta property="article:author" content="Royal">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Royal's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Royal&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://royal19790617.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-源码解析-十万个为什么-node怎么执行js文件的" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/14/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90-%E5%8D%81%E4%B8%87%E4%B8%AA%E4%B8%BA%E4%BB%80%E4%B9%88-node%E6%80%8E%E4%B9%88%E6%89%A7%E8%A1%8Cjs%E6%96%87%E4%BB%B6%E7%9A%84/" class="article-date">
+  <time class="dt-published" datetime="2021-07-14T07:27:59.000Z" itemprop="datePublished">2021-07-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/js/">js</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      源码解析-十万个为什么-node怎么执行js文件的
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="node怎么执行js文件的"><a href="#node怎么执行js文件的" class="headerlink" title="node怎么执行js文件的?"></a>node怎么执行js文件的?</h1><ul>
+<li>初学node的时候，只知道自己写个js文件，然后用node命令去执行，就可以执行这个js文件，当时不求甚解，能用就行，但是等静下心来，自己问自己为什么执行node命令就可以执行这个js文件确并不清楚。<span id="more"></span></li>
+<li>参考nodejs版本： v15.x</li>
+</ul>
+<h2 id="那么node内部究竟是怎么做的呢？"><a href="#那么node内部究竟是怎么做的呢？" class="headerlink" title="那么node内部究竟是怎么做的呢？"></a>那么node内部究竟是怎么做的呢？</h2><ul>
+<li><p>假设有一个 index.js 文件，代码内容如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">console.log(&#39;hello world&#39;)</span><br></pre></td></tr></table></figure></li>
+<li><p>当输入 node index.js 的时候，Node.js 是如何编译、运行这个文件的呢？当输入 Node.js 命令的时候，调用的是 Node.js 源码当中的 main 函数，节选一些核心代码在 src/node_main.cc 中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;判断windows环境还是unix环境</span><br><span class="line">#ifdef _WIN32</span><br><span class="line">#include &lt;windows.h&gt;</span><br><span class="line">#include &lt;VersionHelpers.h&gt;</span><br><span class="line">#include &lt;WinError.h&gt;</span><br><span class="line"></span><br><span class="line">#define SKIP_CHECK_VAR &quot;NODE_SKIP_PLATFORM_CHECK&quot;</span><br><span class="line">#define SKIP_CHECK_SIZE 1</span><br><span class="line">#define SKIP_CHECK_VALUE &quot;1&quot;</span><br><span class="line"></span><br><span class="line">int wmain(int argc, wchar_t* wargv[]) &#123;</span><br><span class="line">  &#x2F;&#x2F; Windows Server 2012 (not R2) is supported until 10&#x2F;10&#x2F;2023, so we allow it</span><br><span class="line">  &#x2F;&#x2F; to run in the experimental support tier.</span><br><span class="line">  ...</span><br><span class="line">  &#x2F;&#x2F;判断windows的适用版本和设置启动node需要的参数</span><br><span class="line">  ...</span><br><span class="line">  argv[argc] &#x3D; nullptr;</span><br><span class="line">  &#x2F;&#x2F; Now that conversion is done, we can finally start.</span><br><span class="line">  return node::Start(argc, argv);&#x2F;&#x2F;下一步的跳转</span><br><span class="line">&#125;</span><br><span class="line">#else</span><br><span class="line">&#x2F;&#x2F; UNIX</span><br><span class="line">#ifdef __linux__</span><br><span class="line">#include &lt;sys&#x2F;auxv.h&gt;</span><br><span class="line">#endif  &#x2F;&#x2F; __linux__</span><br><span class="line">#if defined(__POSIX__) &amp;&amp; defined(NODE_SHARED_MODE)</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">#include &lt;signal.h&gt;</span><br><span class="line">#endif</span><br><span class="line">namespace node &#123;</span><br><span class="line">namespace per_process &#123;</span><br><span class="line">extern bool linux_at_secure;</span><br><span class="line">&#125;  &#x2F;&#x2F; namespace per_process</span><br><span class="line">&#125;  &#x2F;&#x2F; namespace node</span><br><span class="line"></span><br><span class="line">int main(int argc, char* argv[]) &#123;</span><br><span class="line">  ...</span><br><span class="line">  &#x2F;&#x2F;判断unix是否基于可移植操作系统接口标准和设置启动node需要的参数</span><br><span class="line">  ...</span><br><span class="line">#if defined(__POSIX__) &amp;&amp; defined(NODE_SHARED_MODE)</span><br><span class="line">  &#x2F;&#x2F; In node::PlatformInit(), we squash all signal handlers for non-shared lib</span><br><span class="line">  &#x2F;&#x2F; build. In order to run test cases against shared lib build, we also need</span><br><span class="line">  &#x2F;&#x2F; to do the same thing for shared lib build here, but only for SIGPIPE for</span><br><span class="line">  &#x2F;&#x2F; now. If node::PlatformInit() is moved to here, then this section could be</span><br><span class="line">  &#x2F;&#x2F; removed.</span><br><span class="line">  &#123;</span><br><span class="line">    struct sigaction act;</span><br><span class="line">    memset(&amp;act, 0, sizeof(act));</span><br><span class="line">    act.sa_handler &#x3D; SIG_IGN;</span><br><span class="line">    sigaction(SIGPIPE, &amp;act, nullptr);</span><br><span class="line">  &#125;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">#if defined(__linux__)</span><br><span class="line">  node::per_process::linux_at_secure &#x3D; getauxval(AT_SECURE);</span><br><span class="line">#endif</span><br><span class="line">  &#x2F;&#x2F; Disable stdio buffering, it interacts poorly with printf()</span><br><span class="line">  &#x2F;&#x2F; calls elsewhere in the program (e.g., any logging from V8.)</span><br><span class="line">  setvbuf(stdout, nullptr, _IONBF, 0);</span><br><span class="line">  setvbuf(stderr, nullptr, _IONBF, 0);</span><br><span class="line">  return node::Start(argc, argv);&#x2F;&#x2F;关键是这句</span><br><span class="line">&#125;</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure></li>
+<li><p>承接上一步，node::Start(argc, argv)；会跳转到 src/node.cc 文件中 start 方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;node_main_instance.h&quot;</span><br><span class="line"></span><br><span class="line">int Start(int argc, char** argv) &#123;</span><br><span class="line">    &#x2F;&#x2F;初始化</span><br><span class="line">  InitializationResult result &#x3D; InitializeOncePerProcess(argc, argv);</span><br><span class="line">  if (result.early_return) &#123;</span><br><span class="line">    return result.exit_code;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ...</span><br><span class="line">    &#x2F;&#x2F;配置参数</span><br><span class="line">  ...</span><br><span class="line">    &#x2F;&#x2F;核心，运行主实例</span><br><span class="line">    NodeMainInstance main_instance(&amp;params,</span><br><span class="line">                                   uv_default_loop(),</span><br><span class="line">                                   per_process::v8_platform.Platform(),</span><br><span class="line">                                   result.args,</span><br><span class="line">                                   result.exec_args,</span><br><span class="line">                                   indices);</span><br><span class="line">    result.exit_code &#x3D; main_instance.Run(env_info);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"> &#x2F;&#x2F;清理v8引擎平台</span><br><span class="line">  TearDownOncePerProcess();</span><br><span class="line">  return result.exit_code;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>跳转至 node_main_instance.cc 的 Run方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">int NodeMainInstance::Run(const EnvSerializeInfo* env_info) &#123;</span><br><span class="line">  Locker locker(isolate_);</span><br><span class="line">  Isolate::Scope isolate_scope(isolate_);</span><br><span class="line">  HandleScope handle_scope(isolate_);</span><br><span class="line"></span><br><span class="line">  int exit_code &#x3D; 0;</span><br><span class="line">  DeleteFnPtr&lt;Environment, FreeEnvironment&gt; env &#x3D;</span><br><span class="line">      CreateMainEnvironment(&amp;exit_code, env_info);&#x2F;&#x2F;创建环境，感觉并不重要</span><br><span class="line">  CHECK_NOT_NULL(env);</span><br><span class="line"></span><br><span class="line">  Context::Scope context_scope(env-&gt;context());</span><br><span class="line">  Run(&amp;exit_code, env.get());&#x2F;&#x2F;关键，调用void的RUN方法</span><br><span class="line">  return exit_code;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void NodeMainInstance::Run(int* exit_code, Environment* env) &#123;</span><br><span class="line">  if (*exit_code &#x3D;&#x3D; 0) &#123;</span><br><span class="line">      &#x2F;&#x2F;调用这个方法是关键流程</span><br><span class="line">    LoadEnvironment(env, StartExecutionCallback&#123;&#125;);</span><br><span class="line"></span><br><span class="line">    *exit_code &#x3D; SpinEventLoop(env).FromMaybe(1);</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li><p>由于对c++不熟悉，自己理解是调用了node.h引用了外部方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">using StartExecutionCallback &#x3D;</span><br><span class="line">    std::function&lt;v8::MaybeLocal&lt;v8::Value&gt;(const StartExecutionCallbackInfo&amp;)&gt;;</span><br><span class="line"></span><br><span class="line">NODE_EXTERN v8::MaybeLocal&lt;v8::Value&gt; LoadEnvironment(&#x2F;&#x2F;理解是调用了这个方法</span><br><span class="line">    Environment* env,</span><br><span class="line">    StartExecutionCallback cb);</span><br><span class="line">NODE_EXTERN v8::MaybeLocal&lt;v8::Value&gt; LoadEnvironment(</span><br><span class="line">    Environment* env,</span><br><span class="line">    const char* main_script_source_utf8);</span><br><span class="line">NODE_EXTERN void FreeEnvironment(Environment* env);</span><br></pre></td></tr></table></figure></li>
+<li><p>下一步是调用environment.cc</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">MaybeLocal&lt;Value&gt; LoadEnvironment(</span><br><span class="line">    Environment* env,</span><br><span class="line">    StartExecutionCallback cb) &#123;</span><br><span class="line">  env-&gt;InitializeLibuv();</span><br><span class="line">  env-&gt;InitializeDiagnostics();</span><br><span class="line"></span><br><span class="line">  return StartExecution(env, cb);&#x2F;&#x2F;调用StartExecution</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>兜兜转转又回到了node.cc，由于参考了其他大神的博客，发现此处的代码进行了重构，适用性更强，可以根据不同的需要进行启动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;第三步</span><br><span class="line">MaybeLocal&lt;Value&gt; ExecuteBootstrapper(Environment* env,</span><br><span class="line">                                      const char* id,</span><br><span class="line">                                      std::vector&lt;Local&lt;String&gt;&gt;* parameters,</span><br><span class="line">                                      std::vector&lt;Local&lt;Value&gt;&gt;* arguments) &#123;</span><br><span class="line">  EscapableHandleScope scope(env-&gt;isolate());</span><br><span class="line">  MaybeLocal&lt;Function&gt; maybe_fn &#x3D;</span><br><span class="line">      NativeModuleEnv::LookupAndCompile(env-&gt;context(), id, parameters, env);</span><br><span class="line"></span><br><span class="line">  Local&lt;Function&gt; fn;</span><br><span class="line">  if (!maybe_fn.ToLocal(&amp;fn)) &#123;</span><br><span class="line">    return MaybeLocal&lt;Value&gt;();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;理解是到不同的id字串指向目录找执行文件，此处是 internal&#x2F;main&#x2F;run_main_module</span><br><span class="line">  MaybeLocal&lt;Value&gt; result &#x3D; fn-&gt;Call(env-&gt;context(),</span><br><span class="line">                                      Undefined(env-&gt;isolate()),</span><br><span class="line">                                      arguments-&gt;size(),</span><br><span class="line">                                      arguments-&gt;data());</span><br><span class="line"></span><br><span class="line">  &#x2F;&#x2F; If there was an error during bootstrap, it must be unrecoverable</span><br><span class="line">  &#x2F;&#x2F; (e.g. max call stack exceeded). Clear the stack so that the</span><br><span class="line">  &#x2F;&#x2F; AsyncCallbackScope destructor doesn&#39;t fail on the id check.</span><br><span class="line">  &#x2F;&#x2F; There are only two ways to have a stack size &gt; 1: 1) the user manually</span><br><span class="line">  &#x2F;&#x2F; called MakeCallback or 2) user awaited during bootstrap, which triggered</span><br><span class="line">  &#x2F;&#x2F; _tickCallback().</span><br><span class="line">  if (result.IsEmpty()) &#123;</span><br><span class="line">    env-&gt;async_hooks()-&gt;clear_async_id_stack();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return scope.EscapeMaybe(result);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;第二步</span><br><span class="line">static</span><br><span class="line">MaybeLocal&lt;Value&gt; StartExecution(Environment* env, const char* main_script_id) &#123;</span><br><span class="line">  EscapableHandleScope scope(env-&gt;isolate());</span><br><span class="line">  CHECK_NOT_NULL(main_script_id);</span><br><span class="line"></span><br><span class="line">  std::vector&lt;Local&lt;String&gt;&gt; parameters &#x3D; &#123;</span><br><span class="line">      env-&gt;process_string(),</span><br><span class="line">      env-&gt;require_string(),</span><br><span class="line">      env-&gt;internal_binding_string(),</span><br><span class="line">      env-&gt;primordials_string(),</span><br><span class="line">      FIXED_ONE_BYTE_STRING(env-&gt;isolate(), &quot;markBootstrapComplete&quot;)&#125;;</span><br><span class="line"></span><br><span class="line">  std::vector&lt;Local&lt;Value&gt;&gt; arguments &#x3D; &#123;</span><br><span class="line">      env-&gt;process_object(),</span><br><span class="line">      env-&gt;native_module_require(),</span><br><span class="line">      env-&gt;internal_binding_loader(),</span><br><span class="line">      env-&gt;primordials(),</span><br><span class="line">      env-&gt;NewFunctionTemplate(MarkBootstrapComplete)</span><br><span class="line">          -&gt;GetFunction(env-&gt;context())</span><br><span class="line">          .ToLocalChecked()&#125;;</span><br><span class="line"></span><br><span class="line">  return scope.EscapeMaybe(</span><br><span class="line">      ExecuteBootstrapper(env, main_script_id, &amp;parameters, &amp;arguments));&#x2F;&#x2F;调用bootstrap</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;第一步</span><br><span class="line">MaybeLocal&lt;Value&gt; StartExecution(Environment* env, StartExecutionCallback cb) &#123;</span><br><span class="line">  InternalCallbackScope callback_scope(</span><br><span class="line">      env,</span><br><span class="line">      Object::New(env-&gt;isolate()),</span><br><span class="line">      &#123; 1, 0 &#125;,</span><br><span class="line">      InternalCallbackScope::kSkipAsyncHooks);</span><br><span class="line"></span><br><span class="line">  if (cb !&#x3D; nullptr) &#123;</span><br><span class="line">    EscapableHandleScope scope(env-&gt;isolate());</span><br><span class="line"></span><br><span class="line">    if (StartExecution(env, &quot;internal&#x2F;bootstrap&#x2F;environment&quot;).IsEmpty())</span><br><span class="line">      return &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    StartExecutionCallbackInfo info &#x3D; &#123;</span><br><span class="line">      env-&gt;process_object(),</span><br><span class="line">      env-&gt;native_module_require(),</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    return scope.EscapeMaybe(cb(info));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  if (env-&gt;worker_context() !&#x3D; nullptr) &#123;</span><br><span class="line">    return StartExecution(env, &quot;internal&#x2F;main&#x2F;worker_thread&quot;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  std::string first_argv;</span><br><span class="line">  if (env-&gt;argv().size() &gt; 1) &#123;</span><br><span class="line">    first_argv &#x3D; env-&gt;argv()[1];</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  if (first_argv &#x3D;&#x3D; &quot;inspect&quot;) &#123;</span><br><span class="line">    return StartExecution(env, &quot;internal&#x2F;main&#x2F;inspect&quot;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  if (per_process::cli_options-&gt;print_help) &#123;</span><br><span class="line">    return StartExecution(env, &quot;internal&#x2F;main&#x2F;print_help&quot;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  if (env-&gt;options()-&gt;prof_process) &#123;</span><br><span class="line">    return StartExecution(env, &quot;internal&#x2F;main&#x2F;prof_process&quot;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  &#x2F;&#x2F; -e&#x2F;--eval without -i&#x2F;--interactive</span><br><span class="line">  if (env-&gt;options()-&gt;has_eval_string &amp;&amp; !env-&gt;options()-&gt;force_repl) &#123;</span><br><span class="line">    return StartExecution(env, &quot;internal&#x2F;main&#x2F;eval_string&quot;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  if (env-&gt;options()-&gt;syntax_check_only) &#123;</span><br><span class="line">    return StartExecution(env, &quot;internal&#x2F;main&#x2F;check_syntax&quot;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  if (!first_argv.empty() &amp;&amp; first_argv !&#x3D; &quot;-&quot;) &#123;</span><br><span class="line">    return StartExecution(env, &quot;internal&#x2F;main&#x2F;run_main_module&quot;);&#x2F;&#x2F;执行的应该是这句</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  if (env-&gt;options()-&gt;force_repl || uv_guess_handle(STDIN_FILENO) &#x3D;&#x3D; UV_TTY) &#123;</span><br><span class="line">    return StartExecution(env, &quot;internal&#x2F;main&#x2F;repl&quot;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return StartExecution(env, &quot;internal&#x2F;main&#x2F;eval_stdin&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>找到internal/main/run_main_module.js，通过 process.argv[1] 拿到文件名，在我们的 node index.js 中，process.argv[1] 显然就是 index.js，然后调用 path.resolve 解析出文件路径。在最后，run(Module.runMain) 来编译执行我们的 index.js。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#39;use strict&#39;;</span><br><span class="line"></span><br><span class="line">const &#123;</span><br><span class="line">  prepareMainThreadExecution</span><br><span class="line">&#125; &#x3D; require(&#39;internal&#x2F;bootstrap&#x2F;pre_execution&#39;);&#x2F;&#x2F;这里引入文件是为了初始化预加载模块变量等</span><br><span class="line"></span><br><span class="line">prepareMainThreadExecution(true);</span><br><span class="line"></span><br><span class="line">markBootstrapComplete();</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; Note: this loads the module through the ESM loader if the module is</span><br><span class="line">&#x2F;&#x2F; determined to be an ES module. This hangs from the CJS module loader</span><br><span class="line">&#x2F;&#x2F; because we currently allow monkey-patching of the module loaders</span><br><span class="line">&#x2F;&#x2F; in the preloaded scripts through require(&#39;module&#39;).</span><br><span class="line">&#x2F;&#x2F; runMain here might be monkey-patched by users in --require.</span><br><span class="line">&#x2F;&#x2F; XXX: the monkey-patchability here should probably be deprecated.</span><br><span class="line">require(&#39;internal&#x2F;modules&#x2F;cjs&#x2F;loader&#39;).Module.runMain(process.argv[1]); &#x2F;&#x2F;文件名在这里，执行的语句</span><br></pre></td></tr></table></figure></li>
+<li><p>后面还有部分runMain的代码，此处略，只提供一条路径供各位自行研究</p>
+</li>
+<li><ol>
+<li>internal/bootstrap/pre_execution.js的prepareMainThreadExecution</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>prepareMainThreadExecution方法调用initializeCJSLoader() </li>
+</ol>
+</li>
+<li><ol start="3">
+<li>require(‘internal/modules/cjs/loader’) </li>
+</ol>
+</li>
+<li><ol start="4">
+<li>require(‘internal/modules/run_main’).executeUserEntryPoint</li>
+</ol>
+</li>
+</ul>
+<h2 id="以上勾勒了node执行js文件时，源码执行的一条流程线路，Node-js-启动一个文件的过程，其实到最后，也是-require-一个文件的过程，可以理解为是立即-require-一个文件。"><a href="#以上勾勒了node执行js文件时，源码执行的一条流程线路，Node-js-启动一个文件的过程，其实到最后，也是-require-一个文件的过程，可以理解为是立即-require-一个文件。" class="headerlink" title="以上勾勒了node执行js文件时，源码执行的一条流程线路，Node.js 启动一个文件的过程，其实到最后，也是 require 一个文件的过程，可以理解为是立即 require 一个文件。"></a>以上勾勒了node执行js文件时，源码执行的一条流程线路，Node.js 启动一个文件的过程，其实到最后，也是 require 一个文件的过程，可以理解为是立即 require 一个文件。</h2><p>参考：<a target="_blank" rel="noopener" href="https://github.com/nodejs/node/tree/v10.x/src">nodejs源码</a><br>参考：<a target="_blank" rel="noopener" href="https://efe.baidu.com/blog/nodejs-module-analyze/">结合源码分析 Node.js 模块加载与运行原理</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://royal19790617.github.io/2021/07/14/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90-%E5%8D%81%E4%B8%87%E4%B8%AA%E4%B8%BA%E4%BB%80%E4%B9%88-node%E6%80%8E%E4%B9%88%E6%89%A7%E8%A1%8Cjs%E6%96%87%E4%BB%B6%E7%9A%84/" data-id="ckr35wij40000nowm8r6cf6em" data-title="源码解析-十万个为什么-node怎么执行js文件的" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/07/05/vi%E5%BF%AB%E6%8D%B7%E9%94%AE%E7%AC%94%E8%AE%B0/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">vi快捷键笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/antd/">antd</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/js/">js</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/tips/">tips</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/07/14/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90-%E5%8D%81%E4%B8%87%E4%B8%AA%E4%B8%BA%E4%BB%80%E4%B9%88-node%E6%80%8E%E4%B9%88%E6%89%A7%E8%A1%8Cjs%E6%96%87%E4%BB%B6%E7%9A%84/">源码解析-十万个为什么-node怎么执行js文件的</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/05/vi%E5%BF%AB%E6%8D%B7%E9%94%AE%E7%AC%94%E8%AE%B0/">vi快捷键笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/23/docker-compose%E5%AE%89%E8%A3%85redis%E4%B8%BB%E4%BB%8E%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4/">docker-compose安装redis主从哨兵集群</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6node-06-%E4%B9%8Bmocha%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/">从零开始学node-06-之mocha自动化测试</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/15/nodejs%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E4%B9%8B%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/">nodejs常见问题之解决之道</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 Royal<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
