@@ -71,6 +71,54 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-java解决maven证书失效问题" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/04/02/java%E8%A7%A3%E5%86%B3maven%E8%AF%81%E4%B9%A6%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/" class="article-date">
+  <time class="dt-published" datetime="2021-04-02T02:23:49.000Z" itemprop="datePublished">2021-04-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java/">java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/04/02/java%E8%A7%A3%E5%86%B3maven%E8%AF%81%E4%B9%A6%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/">java解决maven证书失效问题</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="问题描述：新建springboot项目，通过maven下载pom-xml引入依赖包时发生报错"><a href="#问题描述：新建springboot项目，通过maven下载pom-xml引入依赖包时发生报错" class="headerlink" title="问题描述：新建springboot项目，通过maven下载pom.xml引入依赖包时发生报错"></a>问题描述：新建springboot项目，通过maven下载pom.xml引入依赖包时发生报错</h2><ul>
+<li>报错关键字<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unable to find valid certification path to requested target</span><br></pre></td></tr></table></figure>
+        
+          <p class="article-more-link">
+            <a href="/2021/04/02/java%E8%A7%A3%E5%86%B3maven%E8%AF%81%E4%B9%A6%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://royal19790617.github.io/2021/04/02/java%E8%A7%A3%E5%86%B3maven%E8%AF%81%E4%B9%A6%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/" data-id="ckq983t2f000ksowm9db27lk3" data-title="java解决maven证书失效问题" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-nodejs调用webservice" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/04/02/nodejs%E8%B0%83%E7%94%A8webservice/" class="article-date">
@@ -523,59 +571,11 @@
 
 
   
-    <article id="post-浅谈理解用户授权和认证" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/03/12/%E6%B5%85%E8%B0%88%E7%90%86%E8%A7%A3%E7%94%A8%E6%88%B7%E6%8E%88%E6%9D%83%E5%92%8C%E8%AE%A4%E8%AF%81/" class="article-date">
-  <time class="dt-published" datetime="2021-03-12T09:21:47.000Z" itemprop="datePublished">2021-03-12</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/tips/">tips</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/03/12/%E6%B5%85%E8%B0%88%E7%90%86%E8%A7%A3%E7%94%A8%E6%88%B7%E6%8E%88%E6%9D%83%E5%92%8C%E8%AE%A4%E8%AF%81/">浅谈理解用户授权和认证</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="公司大牛层层剖析用户授权和认证，想把理解的知识整理记录一下"><a href="#公司大牛层层剖析用户授权和认证，想把理解的知识整理记录一下" class="headerlink" title="公司大牛层层剖析用户授权和认证，想把理解的知识整理记录一下"></a>公司大牛层层剖析用户授权和认证，想把理解的知识整理记录一下</h2><ul>
-<li>由于在公司做过通讯录服务，一直有个先入为主的概念，通讯录不就是用户吗！？大牛让我厘清了一个概念，通讯录和用户认证是两件事，通讯录是通讯录，能提供的功能譬如显示可见组织树和能看到哪些人；而用户认证只是需要用户名密码等一些与登录认证相关的属性（譬如角色权限等）即可；仔细想来确实是把模型给搞混在一起，它们确实不是一件事
-        
-          <p class="article-more-link">
-            <a href="/2021/03/12/%E6%B5%85%E8%B0%88%E7%90%86%E8%A7%A3%E7%94%A8%E6%88%B7%E6%8E%88%E6%9D%83%E5%92%8C%E8%AE%A4%E8%AF%81/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://royal19790617.github.io/2021/03/12/%E6%B5%85%E8%B0%88%E7%90%86%E8%A7%A3%E7%94%A8%E6%88%B7%E6%8E%88%E6%9D%83%E5%92%8C%E8%AE%A4%E8%AF%81/" data-id="ckq983t2u001vsowm7wcpg4zf" data-title="浅谈理解用户授权和认证" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -601,7 +601,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
     </div>
   </div>
 
@@ -612,6 +612,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2021/08/05/linux%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/">linux文件权限</a>
+          </li>
         
           <li>
             <a href="/2021/07/30/%E5%88%9D%E8%AF%86linux-shell/">初识linux shell</a>
@@ -627,10 +631,6 @@
         
           <li>
             <a href="/2021/07/05/vi%E5%BF%AB%E6%8D%B7%E9%94%AE%E7%AC%94%E8%AE%B0/">vi快捷键笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2021/06/23/docker-compose%E5%AE%89%E8%A3%85redis%E4%B8%BB%E4%BB%8E%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4/">docker-compose安装redis主从哨兵集群</a>
           </li>
         
       </ul>
