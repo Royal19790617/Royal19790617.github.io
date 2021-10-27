@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>iptables相关概念以及工作原理 | Royal&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="先要知道LINUX防火墙：隔离内部网络和外部网络的隔离技术。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iptables相关概念以及工作原理">
+<meta property="og:url" content="https://royal19790617.github.io/2021/10/15/iptables%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5%E4%BB%A5%E5%8F%8A%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="Royal&#39;s Blog">
+<meta property="og:description" content="先要知道LINUX防火墙：隔离内部网络和外部网络的隔离技术。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://royal19790617.github.io/2021/10/15/iptables%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5%E4%BB%A5%E5%8F%8A%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/p2.png">
+<meta property="og:image" content="https://royal19790617.github.io/2021/10/15/iptables%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5%E4%BB%A5%E5%8F%8A%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/p1.png">
+<meta property="article:published_time" content="2021-10-15T09:52:43.000Z">
+<meta property="article:modified_time" content="2021-10-20T07:39:59.827Z">
+<meta property="article:author" content="Royal">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://royal19790617.github.io/2021/10/15/iptables%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5%E4%BB%A5%E5%8F%8A%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/p2.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Royal's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Royal&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://royal19790617.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-iptables相关概念以及工作原理" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/10/15/iptables%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5%E4%BB%A5%E5%8F%8A%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" class="article-date">
+  <time class="dt-published" datetime="2021-10-15T09:52:43.000Z" itemprop="datePublished">2021-10-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      iptables相关概念以及工作原理
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="先要知道"><a href="#先要知道" class="headerlink" title="先要知道"></a>先要知道</h2><p>LINUX防火墙：隔离内部网络和外部网络的隔离技术。</p>
+<span id="more"></span>
+<h3 id="防火墙种类"><a href="#防火墙种类" class="headerlink" title="防火墙种类"></a>防火墙种类</h3><ol>
+<li>第三方监控杀毒软件</li>
+<li>系统策略</li>
+<li>文件权限</li>
+<li>防火墙规则 ：原地址 目标地址 端口 协议 mac 数据包中的标志</li>
+<li>类似ACL访问控制列表： 过滤</li>
+</ol>
+<h3 id="从逻辑上讲。防火墙可以大体分为主机防火墙和网络防火墙。"><a href="#从逻辑上讲。防火墙可以大体分为主机防火墙和网络防火墙。" class="headerlink" title="从逻辑上讲。防火墙可以大体分为主机防火墙和网络防火墙。"></a>从逻辑上讲。防火墙可以大体分为主机防火墙和网络防火墙。</h3><ul>
+<li>主机防火墙：针对于单个主机进行防护。</li>
+<li>网络防火墙：往往处于网络入口或边缘，针对于网络入口进行防护，服务于防火墙背后的本地局域网。网络防火和主机防火墙并不冲突，可以理解为，网络防火墙主外(集体)，主机防火墙主内(个人)。</li>
+</ul>
+<h3 id="从物理上讲，防火墙可以分为硬件防火墙和软件防火墙。"><a href="#从物理上讲，防火墙可以分为硬件防火墙和软件防火墙。" class="headerlink" title="从物理上讲，防火墙可以分为硬件防火墙和软件防火墙。"></a>从物理上讲，防火墙可以分为硬件防火墙和软件防火墙。</h3><ul>
+<li>硬件防火墙：在硬件级别实现部分防火墙功能，另一部分功能基于软件实现，性能高，成本高。如：思科ASA、华为防火墙、天融信防火等。</li>
+<li>软件防火墙：应用软件处理逻辑运行于通用硬件平台之上的防火墙，性能低，成本低。如：iptables、firewall（CentOS7独有的）等。</li>
+</ul>
+<h2 id="iptables相关概念"><a href="#iptables相关概念" class="headerlink" title="iptables相关概念"></a>iptables相关概念</h2><p>iptables其实不是真正的防火墙，我们可以把它理解成一个客户端代理，用户通过 iptables这个代理，将用户的安全设定执行到对应的安全框架中，这个安全框架才是直正的防火墙，这个框架的名字叫netfilter。netfilter才是防火墙真正的安全框架(framework)，netfilter位于内核空间。iptables其实是个命令行工具，位于用户空间，我们用这个工具操作真正的框架。</p>
+<p>Netfilter/IPTables是Linux2.4.x之后新一代的Linux防火墙机制，是linux内核的一个子系统。Netfilter采用模块化设计，具有良好的可扩充性。其重要工具模块IPTables从用户态的iptables连接到内核态的Netfilter的架构中，Netfilter与IP协议栈是无缝契合的，并允许使用者对数据报进行过滤、地址转换、处理等操作。与大多数的 Linux软件一样，这个包过滤防火墙是兔费的，它可以代替昂贵的商业防火墙解决方案，完成封包过滤、封包重定向和网络地址转换(NAT)等功能。</p>
+<h3 id="Netfilter是Linux操作系统核心层内部的一个数据包过滤处理模块，它具有如下功能："><a href="#Netfilter是Linux操作系统核心层内部的一个数据包过滤处理模块，它具有如下功能：" class="headerlink" title="Netfilter是Linux操作系统核心层内部的一个数据包过滤处理模块，它具有如下功能："></a>Netfilter是Linux操作系统核心层内部的一个数据包过滤处理模块，它具有如下功能：</h3><ul>
+<li><ol>
+<li>连接跟踪模块（Conntrack）</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>网络地址转换模块（NAT）</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>数据报修改模块（mangle）</li>
+</ol>
+</li>
+<li><ol start="4">
+<li>其它高级功能模块</li>
+</ol>
+</li>
+</ul>
+<h3 id="iptables基础工作原理"><a href="#iptables基础工作原理" class="headerlink" title="iptables基础工作原理"></a>iptables基础工作原理</h3><ul>
+<li><p>我们知道iptables是按照规则来办事的，我们就来说说规则(rules)，规则其实就是网络管理员预定义的条件，规则一般的定义为”如果数据包头符合这样的条件，就这样处理这个数据包”。规则存储在内核空间的信息包过滤表中，这些规则分别指定了源地址、目的地址、传输协议(如TCP、UDP、ICMP)和服务类型(如HTTP、FTP和SMTP)等。数据包与规则匹配时，iptables就根据规则所定义的方法来处理这些数据包，如放行(accept)、拒绝(reject))和丢弃(drop)等。配置防火墙的主要工作就是添加、修改和删除这些规则。<br><img src="p2.png"></p>
+</li>
+<li><p>这样说可能并不容易理解，我们来换个容易理解的角度，从头说起当客户端访问服务器的web服务时，客户端发送报文到网卡，而TCP/IP协议栈是属于内核的一部分，所以，客户端的信息会通过内核的TCP协议传输到用户空间中的web服务中，而此时，客户端报文的目标终点为web服务所监听的套接字P端点上，当web服务需要响应客户端请求时，web服务发出的响应报文的目标终点则为客户端，这个时候，web服务所监听的P与端囗反而变成了原点，我们说过， netfilter 才是真正的防火墙，它是内核的部分，所以，如果我们想要防火墙能够达到”防火”的目的，则需要在内核中设置关卡，所有进出的报文都要通过这些关卡，经过检查后，符合放行条件的才能放行，符合阻拦条件的则需要被阻止，于是，就出现了input关卡和output关卡，而这些关卡在iptables中不被称为关卡”而被称为链”。其实我们上面描述的场景并不完善，因为客户端发来的报文访问的目标地址可能并不是本机，而是其他服务器，当本机的内核支持 IP FORWARD时，我们可以将报文转发给其他服务器，所以，这个时候，我们就会提到 iptables中的其他”关卡，也就是其他链”，他们就是”路由前”、“转发”、”路由后”，他们的英文名是PREROUTING、 FORWARD、 POSTROUTING。也就是说，当我们启用了防火墙功能时，报文需要经过如下关卡，也就是说，根据实际情况的不同，报文经过链可能不同。如果报文需要转发，那么报文则不会经过 Input链发往用户空间，而是直接在内核空间中经过 forward链和 postrouting链转发出去的。</p>
+</li>
+</ul>
+<h3 id="Netfilter在内核中选取五个位置放了五个hook-勾子"><a href="#Netfilter在内核中选取五个位置放了五个hook-勾子" class="headerlink" title="Netfilter在内核中选取五个位置放了五个hook(勾子)"></a>Netfilter在内核中选取五个位置放了五个hook(勾子)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">function(</span><br><span class="line">    INPUT、</span><br><span class="line">    OUTPUT、</span><br><span class="line">    FORWARD、</span><br><span class="line">    PREROUTING、</span><br><span class="line">    POSTROUTING)，</span><br></pre></td></tr></table></figure>
+<ul>
+<li>而这五个hook function向用户开放，用户可以通过一个命令工具（iptables）向其写入规则由信息过滤表（table）组成，包含控制IP包处理的规则集（rules），规则被分组放在链（chain）上</li>
+</ul>
+<h3 id="三种报文流向"><a href="#三种报文流向" class="headerlink" title="三种报文流向"></a>三种报文流向</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">到本机某进程的报文：PREROUTING --&gt; INPUT--&gt;用户空间进程</span><br><span class="line">由本机的某进程发出报文(通常为响应报文)：用户空间进程 --&gt;OUTPUT--&gt; POSTROUTING</span><br><span class="line">由本机转发的报文：PREROUTING --&gt; FORWARD --&gt; POSTROUTING</span><br></pre></td></tr></table></figure>
+
+<h3 id="五个表table：filter、nat、mangle、raw、security"><a href="#五个表table：filter、nat、mangle、raw、security" class="headerlink" title="五个表table：filter、nat、mangle、raw、security"></a>五个表table：filter、nat、mangle、raw、security</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">filter表：过滤规则表，根据预定义的规则过滤符合条件的数据包</span><br><span class="line">nat表：network address translation 地址转换规则表</span><br><span class="line">mangle：修改数据标记位规则表</span><br><span class="line">raw：关闭启用的连接跟踪机制，加快封包穿越防火墙速度</span><br><span class="line">security：用于强制访问控制（MAC）网络规则，由Linux安全模块（如SELinux）实现</span><br></pre></td></tr></table></figure>
+<h3 id="数据包过滤匹配流程"><a href="#数据包过滤匹配流程" class="headerlink" title="数据包过滤匹配流程"></a>数据包过滤匹配流程</h3><p><img src="p1.png"></p>
+<h3 id="内核中数据包的传输过程"><a href="#内核中数据包的传输过程" class="headerlink" title="内核中数据包的传输过程"></a>内核中数据包的传输过程</h3><ul>
+<li><ol>
+<li>当一个数据包进入网卡时，数据包首先进入PREROUTING链，内核根据数据包目的IP判断是否需要转送出去</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>如果数据包就是进入本机的，数据包就会沿着图向下移动，到达INPUT链。数据包到达INPUT链后，任何进程都会收到它。本机上运行的程序可以发送数据包，这些数据包经过OUTPUT链，然后到达POSTROUTING链输出</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>如果数据包是要转发出去的，且内核允许转发，数据包就会向右移动，经过FORWARD链，然后到达POSTROUTING链输出</li>
+</ol>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>Netfilter主要通过表、链实现规则，可以这么说，Netfilter是表的容器，表是链的容器，链是规则的容器，最终形成对数据报处理规则的实现。</li>
+</ul>
+<p>参考：<a target="_blank" rel="noopener" href="https://www.linuxidc.com/Linux/2018-08/153567.htm">iptables 防火墙工作原理及知识点图文详解</a><br>参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/luck-pig/p/12133814.html">linux防火墙的基本概念</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://royal19790617.github.io/2021/10/15/iptables%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5%E4%BB%A5%E5%8F%8A%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" data-id="ckus77w7200027wwmh522djpp" data-title="iptables相关概念以及工作原理" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/10/15/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          iptables中的基本命令详解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/09/28/linux%E7%AE%A1%E9%81%93/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">linux管道</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/antd/">antd</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/js/">js</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/tips/">tips</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/10/15/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/">iptables中的基本命令详解</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/15/iptables%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5%E4%BB%A5%E5%8F%8A%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">iptables相关概念以及工作原理</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/28/linux%E7%AE%A1%E9%81%93/">linux管道</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%86%E5%B1%82%E7%BB%93%E6%9E%84/">linux网络基础之分层结构</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/08/linux%E7%9A%84%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84/">linux的目录结构</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 Royal<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
