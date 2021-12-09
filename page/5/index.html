@@ -71,6 +71,148 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-浅谈理解用户授权和认证" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/12/%E6%B5%85%E8%B0%88%E7%90%86%E8%A7%A3%E7%94%A8%E6%88%B7%E6%8E%88%E6%9D%83%E5%92%8C%E8%AE%A4%E8%AF%81/" class="article-date">
+  <time class="dt-published" datetime="2021-03-12T09:21:47.000Z" itemprop="datePublished">2021-03-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/tips/">tips</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/03/12/%E6%B5%85%E8%B0%88%E7%90%86%E8%A7%A3%E7%94%A8%E6%88%B7%E6%8E%88%E6%9D%83%E5%92%8C%E8%AE%A4%E8%AF%81/">浅谈理解用户授权和认证</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="公司大牛层层剖析用户授权和认证，想把理解的知识整理记录一下"><a href="#公司大牛层层剖析用户授权和认证，想把理解的知识整理记录一下" class="headerlink" title="公司大牛层层剖析用户授权和认证，想把理解的知识整理记录一下"></a>公司大牛层层剖析用户授权和认证，想把理解的知识整理记录一下</h2><ul>
+<li>由于在公司做过通讯录服务，一直有个先入为主的概念，通讯录不就是用户吗！？大牛让我厘清了一个概念，通讯录和用户认证是两件事，通讯录是通讯录，能提供的功能譬如显示可见组织树和能看到哪些人；而用户认证只是需要用户名密码等一些与登录认证相关的属性（譬如角色权限等）即可；仔细想来确实是把模型给搞混在一起，它们确实不是一件事
+        
+          <p class="article-more-link">
+            <a href="/2021/03/12/%E6%B5%85%E8%B0%88%E7%90%86%E8%A7%A3%E7%94%A8%E6%88%B7%E6%8E%88%E6%9D%83%E5%92%8C%E8%AE%A4%E8%AF%81/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://royal19790617.github.io/2021/03/12/%E6%B5%85%E8%B0%88%E7%90%86%E8%A7%A3%E7%94%A8%E6%88%B7%E6%8E%88%E6%9D%83%E5%92%8C%E8%AE%A4%E8%AF%81/" data-id="ckq983t2u001vsowm7wcpg4zf" data-title="浅谈理解用户授权和认证" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-记docker打包java项目镜像使用excel功能报错的解决" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/12/%E8%AE%B0docker%E6%89%93%E5%8C%85java%E9%A1%B9%E7%9B%AE%E9%95%9C%E5%83%8F%E4%BD%BF%E7%94%A8excel%E5%8A%9F%E8%83%BD%E6%8A%A5%E9%94%99%E7%9A%84%E8%A7%A3%E5%86%B3/" class="article-date">
+  <time class="dt-published" datetime="2021-03-12T08:53:02.000Z" itemprop="datePublished">2021-03-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/docker/">docker</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/03/12/%E8%AE%B0docker%E6%89%93%E5%8C%85java%E9%A1%B9%E7%9B%AE%E9%95%9C%E5%83%8F%E4%BD%BF%E7%94%A8excel%E5%8A%9F%E8%83%BD%E6%8A%A5%E9%94%99%E7%9A%84%E8%A7%A3%E5%86%B3/">记docker打包java项目镜像使用excel功能报错的解决</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="一般使用docker打java程序镜像会用openjdk-alpine。这个是最小化的java环境，就像以前装linux虚拟机，都是用最小化安装系统，系统能跑起来就行，要用什么再装什么，没必要去装个4g的完整版，浪费时间，还占用资源。openjdk-alpine这个镜像就是同理，我们用的是springboot和esay-execl做了导入导出excel的接口，在打包的时候就需要安装字符集（代码如下），否则调用接口时就会报错。"><a href="#一般使用docker打java程序镜像会用openjdk-alpine。这个是最小化的java环境，就像以前装linux虚拟机，都是用最小化安装系统，系统能跑起来就行，要用什么再装什么，没必要去装个4g的完整版，浪费时间，还占用资源。openjdk-alpine这个镜像就是同理，我们用的是springboot和esay-execl做了导入导出excel的接口，在打包的时候就需要安装字符集（代码如下），否则调用接口时就会报错。" class="headerlink" title="一般使用docker打java程序镜像会用openjdk-alpine。这个是最小化的java环境，就像以前装linux虚拟机，都是用最小化安装系统，系统能跑起来就行，要用什么再装什么，没必要去装个4g的完整版，浪费时间，还占用资源。openjdk-alpine这个镜像就是同理，我们用的是springboot和esay execl做了导入导出excel的接口，在打包的时候就需要安装字符集（代码如下），否则调用接口时就会报错。"></a>一般使用docker打java程序镜像会用openjdk-alpine。这个是最小化的java环境，就像以前装linux虚拟机，都是用最小化安装系统，系统能跑起来就行，要用什么再装什么，没必要去装个4g的完整版，浪费时间，还占用资源。openjdk-alpine这个镜像就是同理，我们用的是springboot和esay execl做了导入导出excel的接口，在打包的时候就需要安装字符集（代码如下），否则调用接口时就会报错。</h3>
+        
+          <p class="article-more-link">
+            <a href="/2021/03/12/%E8%AE%B0docker%E6%89%93%E5%8C%85java%E9%A1%B9%E7%9B%AE%E9%95%9C%E5%83%8F%E4%BD%BF%E7%94%A8excel%E5%8A%9F%E8%83%BD%E6%8A%A5%E9%94%99%E7%9A%84%E8%A7%A3%E5%86%B3/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://royal19790617.github.io/2021/03/12/%E8%AE%B0docker%E6%89%93%E5%8C%85java%E9%A1%B9%E7%9B%AE%E9%95%9C%E5%83%8F%E4%BD%BF%E7%94%A8excel%E5%8A%9F%E8%83%BD%E6%8A%A5%E9%94%99%E7%9A%84%E8%A7%A3%E5%86%B3/" data-id="ckq983t2z0028sowm5ibi3v3v" data-title="记docker打包java项目镜像使用excel功能报错的解决" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-git常用命令" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" class="article-date">
+  <time class="dt-published" datetime="2021-03-08T02:13:19.000Z" itemprop="datePublished">2021-03-08</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/git/">git</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/03/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">git常用命令</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="从早期用svn做项目管理，到现在使用git，发现git确实是一款优秀的项目版本管理软件，身为一个经历过svn代码被覆盖经历的人来说，git的出现无疑是程序员的福音，从此再也不怕程序丢失了，但是再好的工具也要把正确的使用方式学习好，所以今天简单介绍下git使用的常用高频命令，一般掌握好这些，日常开发觉得能handle住了。"><a href="#从早期用svn做项目管理，到现在使用git，发现git确实是一款优秀的项目版本管理软件，身为一个经历过svn代码被覆盖经历的人来说，git的出现无疑是程序员的福音，从此再也不怕程序丢失了，但是再好的工具也要把正确的使用方式学习好，所以今天简单介绍下git使用的常用高频命令，一般掌握好这些，日常开发觉得能handle住了。" class="headerlink" title="从早期用svn做项目管理，到现在使用git，发现git确实是一款优秀的项目版本管理软件，身为一个经历过svn代码被覆盖经历的人来说，git的出现无疑是程序员的福音，从此再也不怕程序丢失了，但是再好的工具也要把正确的使用方式学习好，所以今天简单介绍下git使用的常用高频命令，一般掌握好这些，日常开发觉得能handle住了。"></a>从早期用svn做项目管理，到现在使用git，发现git确实是一款优秀的项目版本管理软件，身为一个经历过svn代码被覆盖经历的人来说，git的出现无疑是程序员的福音，从此再也不怕程序丢失了，但是再好的工具也要把正确的使用方式学习好，所以今天简单介绍下git使用的常用高频命令，一般掌握好这些，日常开发觉得能handle住了。</h3>
+        
+          <p class="article-more-link">
+            <a href="/2021/03/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://royal19790617.github.io/2021/03/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" data-id="ckq983t2d000fsowm0wpv27cb" data-title="git常用命令" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-docker镜像文件迁移" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/03/08/docker%E9%95%9C%E5%83%8F%E6%96%87%E4%BB%B6%E8%BF%81%E7%A7%BB/" class="article-date">
@@ -402,54 +544,11 @@
 
 
   
-    <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/02/08/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2021-02-08T02:43:54.000Z" itemprop="datePublished">2021-02-08</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/java/">java</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/02/08/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;HelloWorld!&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://royal19790617.github.io/2021/02/08/hello-world/" data-id="ckq983t2e000gsowm4fxgbtjq" data-title="Hello World" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span>
+    <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -475,7 +574,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
     </div>
   </div>
 
@@ -488,23 +587,23 @@
       <ul>
         
           <li>
-            <a href="/2021/10/15/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/">iptables中的基本命令详解</a>
+            <a href="/2021/11/18/%E7%90%86%E8%A7%A3JWT/">理解JWT</a>
+          </li>
+        
+          <li>
+            <a href="/2021/11/16/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3%E2%80%94%E2%80%94%E5%9C%BA%E6%99%AF%E5%BA%94%E7%94%A8%EF%BC%88%E4%BA%8C%EF%BC%89/">iptables中的基本命令详解——场景应用（二）</a>
+          </li>
+        
+          <li>
+            <a href="/2021/11/02/linux%E7%9F%A5%E8%AF%86%E7%82%B9%E4%B9%8Bsu%E5%92%8Csudo%E7%9A%84%E5%8C%BA%E5%88%AB/">linux知识点之su和sudo的区别</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/15/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/">iptables中的基本命令详解——场景应用（一）</a>
           </li>
         
           <li>
             <a href="/2021/10/15/iptables%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5%E4%BB%A5%E5%8F%8A%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">iptables相关概念以及工作原理</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/28/linux%E7%AE%A1%E9%81%93/">linux管道</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/22/linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%86%E5%B1%82%E7%BB%93%E6%9E%84/">linux网络基础之分层结构</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/08/linux%E7%9A%84%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84/">linux的目录结构</a>
           </li>
         
       </ul>

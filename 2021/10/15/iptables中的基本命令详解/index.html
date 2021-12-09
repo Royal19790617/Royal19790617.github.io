@@ -4,15 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>iptables中的基本命令详解 | Royal&#39;s Blog</title>
+  <title>iptables中的基本命令详解——场景应用（一） | Royal&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="article">
-<meta property="og:title" content="iptables中的基本命令详解">
+  <meta name="description" content="命令格式12iptables [-t table] COMMAND [chain] CRETIRIA -j ACTIONiptables [-t 表名] 选项 [链名] [条件] [-j 控制类型]">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iptables中的基本命令详解——场景应用（一）">
 <meta property="og:url" content="https://royal19790617.github.io/2021/10/15/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/index.html">
 <meta property="og:site_name" content="Royal&#39;s Blog">
+<meta property="og:description" content="命令格式12iptables [-t table] COMMAND [chain] CRETIRIA -j ACTIONiptables [-t 表名] 选项 [链名] [条件] [-j 控制类型]">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-10-15T09:53:27.000Z">
-<meta property="article:modified_time" content="2021-10-15T09:53:27.255Z">
+<meta property="article:modified_time" content="2021-11-16T09:56:20.435Z">
 <meta property="article:author" content="Royal">
 <meta name="twitter:card" content="summary">
   
@@ -85,7 +87,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      iptables中的基本命令详解
+      iptables中的基本命令详解——场景应用（一）
     </h1>
   
 
@@ -93,11 +95,68 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        
+        <h2 id="命令格式"><a href="#命令格式" class="headerlink" title="命令格式"></a>命令格式</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables [-t table] COMMAND [chain] CRETIRIA -j ACTION</span><br><span class="line">iptables [-t 表名] 选项 [链名] [条件] [-j 控制类型]</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<h2 id="主要的一些参数"><a href="#主要的一些参数" class="headerlink" title="主要的一些参数"></a>主要的一些参数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">-P 设置默认策略:iptables -P INPUT (DROP|ACCEPT)</span><br><span class="line">-F 清空规则链</span><br><span class="line">-L 查看规则链</span><br><span class="line">-A 在规则链的末尾加入新规则</span><br><span class="line">-I num 在规则链的头部加入新规则</span><br><span class="line">-D num 删除某一条规则</span><br><span class="line">-s 匹配来源地址IP&#x2F;MASK，加叹号&quot;!&quot;表示除这个IP外。</span><br><span class="line">-d 匹配目标地址</span><br><span class="line">-i 网卡名称 匹配从这块网卡流入的数据</span><br><span class="line">-o 网卡名称 匹配从这块网卡流出的数据</span><br><span class="line">-p 匹配协议,如tcp,udp,icmp</span><br><span class="line">--dport num 匹配目标端口号</span><br><span class="line">--sport num 匹配来源端口号</span><br></pre></td></tr></table></figure>
+
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><h3 id="1-删除或清空已有规则"><a href="#1-删除或清空已有规则" class="headerlink" title="1. 删除或清空已有规则"></a>1. 删除或清空已有规则</h3><ul>
+<li>在开始创建iptables规则之前，也许需要删除或清空已有规则。命令如下：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -L &#x2F;&#x2F;查看已有规则链</span><br><span class="line">iptables -F &#x2F;&#x2F;清空规则链 iptables –flush</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="2-设置链的默认策略"><a href="#2-设置链的默认策略" class="headerlink" title="2. 设置链的默认策略"></a>2. 设置链的默认策略</h3><ul>
+<li><p>链的默认政策设置为”ACCEPT”（接受），若要将INPUT,FORWARD,OUTPUT链设置成”DROP”（拒绝），命令如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">iptables -P INPUT DROP</span><br><span class="line">iptables -P FORWARD DROP</span><br><span class="line">iptables -P OUTPUT DROP</span><br></pre></td></tr></table></figure></li>
+<li><p>对于每一个防火墙规则，我们都应该定义两个规则,将INPUT链和OUTPUT链都设置成DROP（拒绝）。众所周知，针对防火墙制定规则，比较安全的做法，将DROP设置成INPUT链和OUTPUT链的默认策略，有需要再对流入或者流出进行开放；当然，如果内部用户是值得信任的，可以不设置对外的规则，那么默认不丢弃所有出站的数据包。在这种情况下,对于每一个防火墙规则要求,你只需要对进站的数据包制定规则。当然这样设置肯定不是精细化的，可能难以应对一些特殊的精细化场景。</p>
+</li>
+</ul>
+<h3 id="3-阻止指定IP地址"><a href="#3-阻止指定IP地址" class="headerlink" title="3. 阻止指定IP地址"></a>3. 阻止指定IP地址</h3><ul>
+<li><p>丢弃来自IP地址x.x.x.x的包，类似于设置黑名单</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BLOCK_THIS_IP&#x3D;&quot;x.x.x.x&quot;</span><br><span class="line">iptables -A INPUT -s &quot;$BLOCK_THIS_IP&quot; -j DROP</span><br></pre></td></tr></table></figure></li>
+<li><p>譬如线上环境的日志里发现来自某ip地址的异常访问记录，可以通过此命令暂时阻止该地址的访问，以便做更深入分析</p>
+</li>
+<li><p>阻止来自IP地址x.x.x.x 通过网卡eth0 匹配协议类型是tcp的包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -i eth0 -p tcp -s &quot;$BLOCK_THIS_IP&quot; -j DROP</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="4-允许所有的SSH的连接请求"><a href="#4-允许所有的SSH的连接请求" class="headerlink" title="4. 允许所有的SSH的连接请求"></a>4. 允许所有的SSH的连接请求</h3><ul>
+<li><p>一般设置linux服务器防火墙，是会开放22端口，可以让内网用户进行远程登录访问的；</p>
+</li>
+<li><p>允许所有来自外部的SSH连接请求，即只允许通过eth0网卡流入或流出，并且目标端口为22的数据包</p>
+</li>
+<li><p>此处命令牵涉扩展模块state，不展开，请自行百度</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -i eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT</span><br><span class="line">iptables -A OUTPUT -o eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT</span><br></pre></td></tr></table></figure></li>
+<li><p>允许本地向外部发起的SSH连接请求，即只允许通过eth0网卡流入或流出，并且目标端口为22的数据包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A OUTPUT -o eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT</span><br><span class="line">iptables -A INPUT -i eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT</span><br></pre></td></tr></table></figure></li>
+<li><p>请注意,这与允许ssh连入的规则略有不同。本例在OUTPUT链上，我们允许NEW和ESTABLISHED状态。在INPUT链上，我们只允许ESTABLISHED状态。ssh连入的规则与之相反。</p>
+</li>
+</ul>
+<h3 id="5-仅允许来自指定网络的SSH连接请求"><a href="#5-仅允许来自指定网络的SSH连接请求" class="headerlink" title="5. 仅允许来自指定网络的SSH连接请求"></a>5. 仅允许来自指定网络的SSH连接请求</h3><ul>
+<li>仅允许来自于192.168.100.0/24域的用户的ssh连接请求<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -i eth0 -p tcp -s 192.168.100.0&#x2F;24 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT</span><br><span class="line">iptables -A OUTPUT -o eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="6-允许http和https的连接请求"><a href="#6-允许http和https的连接请求" class="headerlink" title="6. 允许http和https的连接请求"></a>6. 允许http和https的连接请求</h3><ul>
+<li><p>允许所有来自web - http的连接请求，应用场景：譬如在服务器上部署了一个web应用服务，默认端口80，想从外部访问，就需要开放规则</p>
+</li>
+<li><p>小贴士：1.http也是一种tcp连接；2.这里的state相对就好理解了，有点类似于http的三次握手的状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -i eth0 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT</span><br><span class="line">iptables -A OUTPUT -o eth0 -p tcp --sport 80 -m state --state ESTABLISHED -j ACCEPT</span><br></pre></td></tr></table></figure></li>
+<li><p>允许所有来自web - httpS的连接请求，其实和http对比也就是端口改为443</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -i eth0 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT</span><br><span class="line">iptables -A OUTPUT -o eth0 -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="7-使用multiport-将多个规则结合在一起"><a href="#7-使用multiport-将多个规则结合在一起" class="headerlink" title="7. 使用multiport 将多个规则结合在一起"></a>7. 使用multiport 将多个规则结合在一起</h3><ul>
+<li>允许多个端口从外界连入，除了为每个端口都写一条独立的规则外，我们可以用multiport将其组合成一条规则。如下所示：</li>
+<li>允许所有ssh,http,https的流量访问<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -i eth0 -p tcp -m multiport --dports 22,80,443 -m state --state NEW,ESTABLISHED -j ACCEPT</span><br><span class="line">iptables -A OUTPUT -o eth0 -p tcp -m multiport --sports 22,80,443 -m state --state ESTABLISHED -j ACCEPT</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="8-仅允许从本地发起到一个指定的网络域的SSH请求"><a href="#8-仅允许从本地发起到一个指定的网络域的SSH请求" class="headerlink" title="8. 仅允许从本地发起到一个指定的网络域的SSH请求"></a>8. 仅允许从本地发起到一个指定的网络域的SSH请求</h3><ul>
+<li>仅允许从内部连接到网域192.168.100.0/24 在安全级别较高的场景适用<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A OUTPUT -o eth0 -p tcp -d 192.168.100.0&#x2F;24 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT</span><br><span class="line">iptables -A INPUT -i eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="9-允许从本地发起的HTTPS连接请求"><a href="#9-允许从本地发起的HTTPS连接请求" class="headerlink" title="9. 允许从本地发起的HTTPS连接请求"></a>9. 允许从本地发起的HTTPS连接请求</h3><ul>
+<li>下面的规则允许输出安全的网络流量。如果你想允许用户访问互联网，这是非常有必要的。在服务器上，这些规则能让你使用wget从外部下载一些文件</li>
+<li>对于HTTP web流量的外联请求，只需要将上述命令中的端口从443改成80即可。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A OUTPUT -o eth0 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT</span><br><span class="line">iptables -A INPUT -i eth0 -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h2><p>参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/vathe/p/6973656.html">iptables命令使用详解</a><br>参考：<a target="_blank" rel="noopener" href="https://www.linuxprobe.com/25-iptables-common-examples.html">25个iptables常用示例</a></p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://royal19790617.github.io/2021/10/15/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" data-id="ckus77w7100017wwm3ji60x7m" data-title="iptables中的基本命令详解" class="article-share-link">Share</a>
+      <a data-url="https://royal19790617.github.io/2021/10/15/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" data-id="ckus77w7100017wwm3ji60x7m" data-title="iptables中的基本命令详解——场景应用（一）" class="article-share-link">Share</a>
       
       
       
@@ -106,6 +165,15 @@
   
     
 <nav id="article-nav">
+  
+    <a href="/2021/11/02/linux%E7%9F%A5%E8%AF%86%E7%82%B9%E4%B9%8Bsu%E5%92%8Csudo%E7%9A%84%E5%8C%BA%E5%88%AB/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          linux知识点之su和sudo的区别
+        
+      </div>
+    </a>
   
   
     <a href="/2021/10/15/iptables%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5%E4%BB%A5%E5%8F%8A%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" id="article-nav-older" class="article-nav-link-wrap">
@@ -142,7 +210,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
     </div>
   </div>
 
@@ -155,23 +223,23 @@
       <ul>
         
           <li>
-            <a href="/2021/10/15/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/">iptables中的基本命令详解</a>
+            <a href="/2021/11/18/%E7%90%86%E8%A7%A3JWT/">理解JWT</a>
+          </li>
+        
+          <li>
+            <a href="/2021/11/16/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3%E2%80%94%E2%80%94%E5%9C%BA%E6%99%AF%E5%BA%94%E7%94%A8%EF%BC%88%E4%BA%8C%EF%BC%89/">iptables中的基本命令详解——场景应用（二）</a>
+          </li>
+        
+          <li>
+            <a href="/2021/11/02/linux%E7%9F%A5%E8%AF%86%E7%82%B9%E4%B9%8Bsu%E5%92%8Csudo%E7%9A%84%E5%8C%BA%E5%88%AB/">linux知识点之su和sudo的区别</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/15/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/">iptables中的基本命令详解——场景应用（一）</a>
           </li>
         
           <li>
             <a href="/2021/10/15/iptables%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5%E4%BB%A5%E5%8F%8A%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">iptables相关概念以及工作原理</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/28/linux%E7%AE%A1%E9%81%93/">linux管道</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/22/linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%86%E5%B1%82%E7%BB%93%E6%9E%84/">linux网络基础之分层结构</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/08/linux%E7%9A%84%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84/">linux的目录结构</a>
           </li>
         
       </ul>
