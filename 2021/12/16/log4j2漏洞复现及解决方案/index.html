@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>log4j2漏洞复现及解决方案 | Royal&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Log4j2重大漏洞乍一听到Log4j2有重大漏洞，看了网上很多报道，一头雾水：  这个是什么bug，到底是怎么个原理？    听说影响很大，到底有什么影响？    怎么确认自己的程序有没有受影响？    如何解决这个漏洞？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="log4j2漏洞复现及解决方案">
+<meta property="og:url" content="https://royal19790617.github.io/2021/12/16/log4j2%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/index.html">
+<meta property="og:site_name" content="Royal&#39;s Blog">
+<meta property="og:description" content="Log4j2重大漏洞乍一听到Log4j2有重大漏洞，看了网上很多报道，一头雾水：  这个是什么bug，到底是怎么个原理？    听说影响很大，到底有什么影响？    怎么确认自己的程序有没有受影响？    如何解决这个漏洞？">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://royal19790617.github.io/2021/12/16/log4j2%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/p1.png">
+<meta property="og:image" content="https://royal19790617.github.io/2021/12/16/log4j2%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/p2.png">
+<meta property="og:image" content="https://royal19790617.github.io/2021/12/16/log4j2%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/p3.png">
+<meta property="og:image" content="https://royal19790617.github.io/2021/12/16/log4j2%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/p4.png">
+<meta property="article:published_time" content="2021-12-16T02:59:45.000Z">
+<meta property="article:modified_time" content="2021-12-27T08:33:15.826Z">
+<meta property="article:author" content="Royal">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://royal19790617.github.io/2021/12/16/log4j2%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/p1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Royal's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Royal&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://royal19790617.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-log4j2漏洞复现及解决方案" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/12/16/log4j2%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="article-date">
+  <time class="dt-published" datetime="2021-12-16T02:59:45.000Z" itemprop="datePublished">2021-12-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java/">java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      log4j2漏洞复现及解决方案
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="Log4j2重大漏洞"><a href="#Log4j2重大漏洞" class="headerlink" title="Log4j2重大漏洞"></a>Log4j2重大漏洞</h2><h3 id="乍一听到Log4j2有重大漏洞，看了网上很多报道，一头雾水："><a href="#乍一听到Log4j2有重大漏洞，看了网上很多报道，一头雾水：" class="headerlink" title="乍一听到Log4j2有重大漏洞，看了网上很多报道，一头雾水："></a>乍一听到Log4j2有重大漏洞，看了网上很多报道，一头雾水：</h3><ul>
+<li><ol>
+<li>这个是什么bug，到底是怎么个原理？</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>听说影响很大，到底有什么影响？</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>怎么确认自己的程序有没有受影响？</li>
+</ol>
+</li>
+<li><ol start="4">
+<li>如何解决这个漏洞？<span id="more"></span></li>
+</ol>
+</li>
+</ul>
+<h3 id="漏洞原理及详情"><a href="#漏洞原理及详情" class="headerlink" title="漏洞原理及详情"></a>漏洞原理及详情</h3><ul>
+<li>攻击者可利用此漏洞构造特殊的数据请求包，最终触发远程代码执行。</li>
+<li>漏洞原理官方表述是：Apache Log4j2 中存在JNDI注入漏洞，当程序将用户输入的数据进行日志记录时，即可触发此漏洞，未经授权的攻击者利用该漏洞，在目标服务器上执行任意代码，触发Log4j2组件解析缺陷，实现目标服务器的任意代码执行，获得目标服务器权限。</li>
+<li>通俗简单的说就是：在打印日志的时候，如果你的日志内容中包含关键词 ${，攻击者就能将关键字所包含的内容当作变量来替换成任何攻击命令，并且执行。</li>
+<li>由于 Apache Log4j2 的某些函数具有递归分析函数，因此攻击者可以直接构造恶意请求来触发远程代码执行漏洞。</li>
+</ul>
+<h3 id="影响"><a href="#影响" class="headerlink" title="影响"></a>影响</h3><ul>
+<li><ol>
+<li>能窃取私密信息，譬如用户名密码</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>执行代码段，直接把你程序搞死<h4 id="等级：高危，该漏洞影响范围极广，危害极大。"><a href="#等级：高危，该漏洞影响范围极广，危害极大。" class="headerlink" title="等级：高危，该漏洞影响范围极广，危害极大。"></a>等级：高危，该漏洞影响范围极广，危害极大。</h4><h4 id="CVSS评分：10（最高级）漏洞状态："><a href="#CVSS评分：10（最高级）漏洞状态：" class="headerlink" title="CVSS评分：10（最高级）漏洞状态："></a>CVSS评分：10（最高级）漏洞状态：</h4><h4 id="受影响的版本：Apache-log4j2-2-0-2-14-1-版本均受影响。"><a href="#受影响的版本：Apache-log4j2-2-0-2-14-1-版本均受影响。" class="headerlink" title="受影响的版本：Apache log4j2 2.0 - 2.14.1 版本均受影响。"></a>受影响的版本：Apache log4j2 2.0 - 2.14.1 版本均受影响。</h4><h4 id="安全版本：Apache-log4j-2-15-0-rc2"><a href="#安全版本：Apache-log4j-2-15-0-rc2" class="headerlink" title="安全版本：Apache log4j-2.15.0-rc2"></a>安全版本：Apache log4j-2.15.0-rc2</h4></li>
+</ol>
+</li>
+</ul>
+<h3 id="确认是否被影响到"><a href="#确认是否被影响到" class="headerlink" title="确认是否被影响到"></a>确认是否被影响到</h3><h4 id="初步"><a href="#初步" class="headerlink" title="初步"></a>初步</h4><ul>
+<li>我用的是idea，全局搜索Log4j关键字，逐步追踪到引用处</li>
+<li>pom文件或者gradle是否添加过log4j的依赖，并关注版本号</li>
+</ul>
+<h4 id="如何证实漏洞"><a href="#如何证实漏洞" class="headerlink" title="如何证实漏洞"></a>如何证实漏洞</h4><ul>
+<li><ol>
+<li>通过流量监测设备监控是否有相关 DNSLog 域名的请求</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>通过监测相关日志中是否存在“jndi:ldap://”、“jndi:rmi”等字符来发现可能的攻击行为。</li>
+</ol>
+</li>
+</ul>
+<h5 id="DNSLog是干嘛的"><a href="#DNSLog是干嘛的" class="headerlink" title="DNSLog是干嘛的"></a>DNSLog是干嘛的</h5><ul>
+<li>DNSLog可以为你免费分配一个二级域名，并记录这个二级域名做DNS解析过程中的域名和IP映射关系的请求记录。当你对这个二级域名进行请求时，自然会进行DNS解析，所以你就会在当前的页面查看到解析的记录。<br><img src="p1.png"></li>
+</ul>
+<h5 id="重现漏洞操作步骤"><a href="#重现漏洞操作步骤" class="headerlink" title="重现漏洞操作步骤"></a>重现漏洞操作步骤</h5><ul>
+<li><p>新建一个Spring Boot的Web项目，配置对应版本的log4j2，搭了好久，maven官方已经下不到log4j2的jar包了，总之只要是之前有问题jar包的项目就行</p>
+</li>
+<li><p>只要在项目里打印过入参的情况即可重现问题<br><img src="p2.png"></p>
+</li>
+<li><p>postman进行调用<br><img src="p3.png"></p>
+</li>
+<li><p>回到DNSLog页面上刷新一下DNS解析记录，可以看到，攻击生效<br><img src="p4.png"></p>
+</li>
+</ul>
+<h3 id="如何解决"><a href="#如何解决" class="headerlink" title="如何解决"></a>如何解决</h3><h4 id="临时方案"><a href="#临时方案" class="headerlink" title="临时方案"></a>临时方案</h4><ul>
+<li>修改log4j2配置：log4j2.formatMsgNolookups=True</li>
+<li>修改JVM参数 -Dlog4j2.formatMsgNoLookups=true</li>
+<li>测试可行</li>
+</ul>
+<h4 id="彻底解决"><a href="#彻底解决" class="headerlink" title="彻底解决"></a>彻底解决</h4><ul>
+<li>log4j升级到2.15.0版本及以上</li>
+</ul>
+<h4 id="平替方案"><a href="#平替方案" class="headerlink" title="平替方案"></a>平替方案</h4><ul>
+<li>springboot默认用的就是logback，我们自己项目用的就是logback，功能方面也是完全满足，其实这次大事件并未牵涉到我们，但是一开始因为不了解并没确定，然后出于学习的目的就写了这篇博客，以供大家参考。</li>
+</ul>
+<p>参考：<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/505025655/answer/2265606581">如何看待log4j2远程代码执行漏洞?（一）</a><br>参考：<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/505025655/answer/2266423796">如何看待log4j2远程代码执行漏洞?（二）</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://royal19790617.github.io/2021/12/16/log4j2%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" data-id="ckxk659hw0000u8wmhv60en6j" data-title="log4j2漏洞复现及解决方案" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/12/24/nodejs%E4%B9%8B%E4%BD%BF%E7%94%A8sequelize%E9%85%8D%E7%BD%AEmysql%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          nodejs之使用sequelize配置mysql及简单使用
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/11/18/%E7%90%86%E8%A7%A3JWT/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">理解JWT</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/antd/">antd</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/js/">js</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/tips/">tips</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/01/31/linux%E6%8C%82%E8%BD%BDUSB%E4%BC%98%E7%9B%98/">linux挂载USB优盘</a>
+          </li>
+        
+          <li>
+            <a href="/2021/12/24/%E5%9C%A8ubuntu%E7%B3%BB%E7%BB%9F%E4%B8%8B%E6%90%AD%E5%BB%BAdocker-compose%E7%8E%AF%E5%A2%83%E5%8F%8A%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">在ubuntu系统下搭建docker-compose环境及踩坑记录</a>
+          </li>
+        
+          <li>
+            <a href="/2021/12/24/nodejs%E4%B9%8B%E4%BD%BF%E7%94%A8sequelize%E9%85%8D%E7%BD%AEmysql%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">nodejs之使用sequelize配置mysql及简单使用</a>
+          </li>
+        
+          <li>
+            <a href="/2021/12/16/log4j2%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">log4j2漏洞复现及解决方案</a>
+          </li>
+        
+          <li>
+            <a href="/2021/11/18/%E7%90%86%E8%A7%A3JWT/">理解JWT</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 Royal<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

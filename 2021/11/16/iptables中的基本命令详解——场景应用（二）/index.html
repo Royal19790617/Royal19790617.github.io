@@ -6,15 +6,21 @@
   
   <title>iptables中的基本命令详解——场景应用（二） | Royal&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="article">
+  <meta name="description" content="书接上回">
+<meta property="og:type" content="article">
 <meta property="og:title" content="iptables中的基本命令详解——场景应用（二）">
 <meta property="og:url" content="https://royal19790617.github.io/2021/11/16/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3%E2%80%94%E2%80%94%E5%9C%BA%E6%99%AF%E5%BA%94%E7%94%A8%EF%BC%88%E4%BA%8C%EF%BC%89/index.html">
 <meta property="og:site_name" content="Royal&#39;s Blog">
+<meta property="og:description" content="书接上回">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://royal19790617.github.io/2021/11/16/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3%E2%80%94%E2%80%94%E5%9C%BA%E6%99%AF%E5%BA%94%E7%94%A8%EF%BC%88%E4%BA%8C%EF%BC%89/p1.png">
+<meta property="og:image" content="https://royal19790617.github.io/2021/11/16/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3%E2%80%94%E2%80%94%E5%9C%BA%E6%99%AF%E5%BA%94%E7%94%A8%EF%BC%88%E4%BA%8C%EF%BC%89/p2.png">
+<meta property="og:image" content="https://royal19790617.github.io/2021/11/16/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3%E2%80%94%E2%80%94%E5%9C%BA%E6%99%AF%E5%BA%94%E7%94%A8%EF%BC%88%E4%BA%8C%EF%BC%89/p3.png">
 <meta property="article:published_time" content="2021-11-16T09:47:40.000Z">
-<meta property="article:modified_time" content="2021-11-16T09:47:40.426Z">
+<meta property="article:modified_time" content="2021-12-09T10:20:16.261Z">
 <meta property="article:author" content="Royal">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://royal19790617.github.io/2021/11/16/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3%E2%80%94%E2%80%94%E5%9C%BA%E6%99%AF%E5%BA%94%E7%94%A8%EF%BC%88%E4%BA%8C%EF%BC%89/p1.png">
   
     <link rel="alternate" href="/atom.xml" title="Royal's Blog" type="application/atom+xml">
   
@@ -77,6 +83,10 @@
   <time class="dt-published" datetime="2021-11-16T09:47:40.000Z" itemprop="datePublished">2021-11-16</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -93,7 +103,49 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        
+        <h2 id="书接上回"><a href="#书接上回" class="headerlink" title="书接上回"></a>书接上回</h2><span id="more"></span>
+
+<h3 id="10-负载均衡传入的网络流量"><a href="#10-负载均衡传入的网络流量" class="headerlink" title="10. 负载均衡传入的网络流量"></a>10. 负载均衡传入的网络流量</h3><ul>
+<li>使用iptables可以实现传入web流量的负载均衡，我们可以传入web流量负载均衡使用iptables防火墙规则。</li>
+<li>将HTTPS流量负载平衡至三个不同的ip地址。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">iptables -A PREROUTING -i eth0 -p tcp --dport 443 -m state --state NEW -m nth --counter 0 --every 3 --packet 0 -j DNAT --to-destination 192.168.1.101:443</span><br><span class="line">iptables -A PREROUTING -i eth0 -p tcp --dport 443 -m state --state NEW -m nth --counter 0 --every 3 --packet 1 -j DNAT --to-destination 192.168.1.102:443</span><br><span class="line">iptables -A PREROUTING -i eth0 -p tcp --dport 443 -m state --state NEW -m nth --counter 0 --every 3 --packet 2 -j DNAT --to-destination 192.168.1.103:443</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="11-ping和禁ping"><a href="#11-ping和禁ping" class="headerlink" title="11. ping和禁ping"></a>11. ping和禁ping</h3><ul>
+<li><p>允许外部主机ping内部主机</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT</span><br><span class="line">iptables -A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT</span><br></pre></td></tr></table></figure></li>
+<li><p>允许内部主机ping外部主机</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT</span><br><span class="line">iptables -A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT</span><br></pre></td></tr></table></figure></li>
+<li><p>实际案例：在主机上禁ping<br><img src="p1.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -I INPUT -p icmp -j DROP</span><br></pre></td></tr></table></figure>
+<p><img src="p2.png"></p>
+</li>
+<li><p>查看添加的链</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -L INPUT --line-numbers</span><br></pre></td></tr></table></figure>
+<p><img src="p3.png"></p>
+</li>
+<li><p>恢复原状，删除添加的链的行号</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -D INPUT 1</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="12-允许回环访问"><a href="#12-允许回环访问" class="headerlink" title="12. 允许回环访问"></a>12. 允许回环访问</h3><ul>
+<li>在服务器上允许127.0.0.1回环访问。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -i lo -j ACCEPT</span><br><span class="line">iptables -A OUTPUT -o lo -j ACCEPT</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="13-允许内部网络域外部网络的通信"><a href="#13-允许内部网络域外部网络的通信" class="headerlink" title="13. 允许内部网络域外部网络的通信"></a>13. 允许内部网络域外部网络的通信</h3><ul>
+<li>防火墙服务器上的其中一个网卡连接到外部，另一个网卡连接到内部服务器，使用以下规则允许内部网络与外部网络的通信。此例中，eth1连接到外部网络(互联网)，eth0连接到内部网络(例如:192.168.1.x)。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -A FORWARD -i eth0 -o eth1 -j ACCEPT</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="14-允许出站的DNS连接"><a href="#14-允许出站的DNS连接" class="headerlink" title="14. 允许出站的DNS连接"></a>14. 允许出站的DNS连接</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A OUTPUT -p udp -o eth0 --dport 53 -j ACCEPT</span><br><span class="line">iptables -A INPUT -p udp -i eth0 --sport 53 -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<h3 id="15-允许来自指定网络的MySQL连接请求"><a href="#15-允许来自指定网络的MySQL连接请求" class="headerlink" title="15. 允许来自指定网络的MySQL连接请求"></a>15. 允许来自指定网络的MySQL连接请求</h3><ul>
+<li>很多情况下，MySQL数据库与web服务跑在同一台服务器上。有时候我们仅希望DBA和开发人员从内部网络（192.168.100.0/24）直接登录数据库，可尝试以下命令：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -i eth0 -p tcp -s 192.168.100.0&#x2F;24 --dport 3306 -m state --state NEW,ESTABLISHED -j ACCEPT</span><br><span class="line">iptables -A OUTPUT -o eth0 -p tcp --sport 3306 -m state --state ESTABLISHED -j ACCEPT</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="16-防止DoS攻击"><a href="#16-防止DoS攻击" class="headerlink" title="16. 防止DoS攻击"></a>16. 防止DoS攻击</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -p tcp --dport 80 -m limit --limit 25&#x2F;minute --limit-burst 100 -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<h3 id="端口转发"><a href="#端口转发" class="headerlink" title="端口转发"></a>端口转发</h3><ul>
+<li><p>将来自422端口的流量全部转到22端口，这意味着我们既能通过422端口又能通过22端口进行ssh连接。启用DNAT转发。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A PREROUTING -p tcp -d 192.168.102.37 --dport 422 -j DNAT --to 192.168.102.37:22</span><br></pre></td></tr></table></figure></li>
+<li><p>另外</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -i eth0 -p tcp --dport 422 -m state --state NEW,ESTABLISHED -j ACCEPT</span><br><span class="line">iptables -A OUTPUT -o eth0 -p tcp --sport 422 -m state --state ESTABLISHED -j ACCEPT</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/gytbolg/p/11013365.html">https://www.cnblogs.com/gytbolg/p/11013365.html</a></p>
+
       
     </div>
     <footer class="article-footer">
@@ -151,7 +203,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
     </div>
   </div>
 
@@ -164,23 +216,23 @@
       <ul>
         
           <li>
+            <a href="/2022/01/31/linux%E6%8C%82%E8%BD%BDUSB%E4%BC%98%E7%9B%98/">linux挂载USB优盘</a>
+          </li>
+        
+          <li>
+            <a href="/2021/12/24/%E5%9C%A8ubuntu%E7%B3%BB%E7%BB%9F%E4%B8%8B%E6%90%AD%E5%BB%BAdocker-compose%E7%8E%AF%E5%A2%83%E5%8F%8A%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">在ubuntu系统下搭建docker-compose环境及踩坑记录</a>
+          </li>
+        
+          <li>
+            <a href="/2021/12/24/nodejs%E4%B9%8B%E4%BD%BF%E7%94%A8sequelize%E9%85%8D%E7%BD%AEmysql%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">nodejs之使用sequelize配置mysql及简单使用</a>
+          </li>
+        
+          <li>
+            <a href="/2021/12/16/log4j2%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">log4j2漏洞复现及解决方案</a>
+          </li>
+        
+          <li>
             <a href="/2021/11/18/%E7%90%86%E8%A7%A3JWT/">理解JWT</a>
-          </li>
-        
-          <li>
-            <a href="/2021/11/16/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3%E2%80%94%E2%80%94%E5%9C%BA%E6%99%AF%E5%BA%94%E7%94%A8%EF%BC%88%E4%BA%8C%EF%BC%89/">iptables中的基本命令详解——场景应用（二）</a>
-          </li>
-        
-          <li>
-            <a href="/2021/11/02/linux%E7%9F%A5%E8%AF%86%E7%82%B9%E4%B9%8Bsu%E5%92%8Csudo%E7%9A%84%E5%8C%BA%E5%88%AB/">linux知识点之su和sudo的区别</a>
-          </li>
-        
-          <li>
-            <a href="/2021/10/15/iptables%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/">iptables中的基本命令详解——场景应用（一）</a>
-          </li>
-        
-          <li>
-            <a href="/2021/10/15/iptables%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5%E4%BB%A5%E5%8F%8A%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">iptables相关概念以及工作原理</a>
           </li>
         
       </ul>
@@ -196,7 +248,7 @@
   <div class="outer">
     <div id="footer-info" class="inner">
       
-      &copy; 2021 Royal<br>
+      &copy; 2022 Royal<br>
       Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
