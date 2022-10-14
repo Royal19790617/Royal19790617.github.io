@@ -71,6 +71,55 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-nodejs替换文件内容" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/04/14/nodejs%E6%9B%BF%E6%8D%A2%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9/" class="article-date">
+  <time class="dt-published" datetime="2021-04-14T07:00:17.000Z" itemprop="datePublished">2021-04-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/js/">js</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/04/14/nodejs%E6%9B%BF%E6%8D%A2%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9/">nodejs替换文件内容</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><ul>
+<li>单位要新启动一个项目，我负责后台服务接口，框架是搭好的模板，早上还在洋洋自得，从其他项目复制router，model，servcie的文件生成一套新的接口，从修改内容到调通接口，才用了一个小时左右；到了下午要写第二套接口的时候，有点犯难了，后面还有几套接口要写，无论有没有业务逻辑，接口的架构部分完全可以复制，也就是把一些关键字做替换就是一套新接口文件了，重复劳动没意思，所以想写一个代码生成工具，提高生成效率才是王道。</li>
+<li>一套接口包含新增，修改，删除，单个查询，列表查询
+        
+          <p class="article-more-link">
+            <a href="/2021/04/14/nodejs%E6%9B%BF%E6%8D%A2%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://royal19790617.github.io/2021/04/14/nodejs%E6%9B%BF%E6%8D%A2%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9/" data-id="ckq983t2j000xsowmd3cb1zsu" data-title="nodejs替换文件内容" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-从零开始学node-03-之初始化WEB项目" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/04/13/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6node-03-%E4%B9%8B%E5%88%9D%E5%A7%8B%E5%8C%96WEB%E9%A1%B9%E7%9B%AE/" class="article-date">
@@ -505,84 +554,6 @@
 
 
   
-    <article id="post-ES语法学习" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/03/24/ES%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/" class="article-date">
-  <time class="dt-published" datetime="2021-03-24T02:42:41.000Z" itemprop="datePublished">2021-03-24</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/js/">js</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/03/24/ES%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/">ES6语法学习</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="ES语法概述"><a href="#ES语法概述" class="headerlink" title="ES语法概述"></a>ES语法概述</h1><ul>
-<li>ES全称ECMAScript，ECMAScript是ECMA制定的标准化脚本语言。</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th align="left">ECMAScript版本</th>
-<th align="left">发布时间</th>
-<th align="left">新增特性</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">CMAScript 2009(ES5)</td>
-<td align="left">2009年11月</td>
-<td align="left">扩展了Object、Array、Function的功能等</td>
-</tr>
-<tr>
-<td align="left">ECMAScript 2015(ES6)</td>
-<td align="left">2015年6月</td>
-<td align="left">类，模块化，箭头函数，函数参数默认值等</td>
-</tr>
-<tr>
-<td align="left">ECMAScript 2016(ES7)</td>
-<td align="left">2016年3月</td>
-<td align="left">includes，指数操作符</td>
-</tr>
-<tr>
-<td align="left">ECMAScript 2017(ES8)</td>
-<td align="left">2017年6月</td>
-<td align="left">sync/await，Object.values()，Object.entries()，String padding等</td>
-</tr>
-</tbody></table>
-        
-          <p class="article-more-link">
-            <a href="/2021/03/24/ES%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://royal19790617.github.io/2021/03/24/ES%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/" data-id="ckq983t210000sowmeg995jux" data-title="ES6语法学习" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -613,7 +584,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
     </div>
   </div>
 
@@ -624,6 +595,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2022/10/14/linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%9C%E7%A8%8B%E6%8A%93%E5%8C%85%E5%8F%8A%E8%A7%A3%E6%9E%90/">linux服务器远程抓包及解析</a>
+          </li>
         
           <li>
             <a href="/2022/07/17/nodejs%E6%90%AD%E5%BB%BArocketmq%E7%9A%84demo/">nodejs搭建rocketmq的demo</a>
@@ -639,10 +614,6 @@
         
           <li>
             <a href="/2021/12/24/%E5%9C%A8ubuntu%E7%B3%BB%E7%BB%9F%E4%B8%8B%E6%90%AD%E5%BB%BAdocker-compose%E7%8E%AF%E5%A2%83%E5%8F%8A%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">在ubuntu系统下搭建docker-compose环境及踩坑记录</a>
-          </li>
-        
-          <li>
-            <a href="/2021/12/24/nodejs%E4%B9%8B%E4%BD%BF%E7%94%A8sequelize%E9%85%8D%E7%BD%AEmysql%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">nodejs之使用sequelize配置mysql及简单使用</a>
           </li>
         
       </ul>
